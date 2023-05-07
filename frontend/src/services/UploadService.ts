@@ -1,18 +1,24 @@
 import axios from "axios";
+import {ExtendedFileProps} from "react-mui-fileuploader/dist/types/index.types";
 
 export class UploadService {
-  private baseURL: string = "https://localhost:8000";
-  async upload(files: File[]) {
-    let formData = new FormData();
+  private baseURL: string = "http://localhost:8000";
 
-    for (let file of files) {
-      formData.append(file.name, file);
+  async upload(files: ExtendedFileProps[]) {
+
+    if (files?.length > 0) {
+      let promises: Promise<void>[] = [];
+
+      for (let file of files) {
+        let formData = new FormData();
+        formData.append("file", file);
+        promises.push(axios.post(`/upload`, formData,
+        {
+          baseURL: this.baseURL,
+          headers: {"Content-Type": "multipart/form-data"},
+        }));
+      }
+      await Promise.all(promises);
     }
-
-    await axios({
-      baseURL: this.baseURL,
-      url: "upload",
-      data: formData,
-    })
   }
 }
