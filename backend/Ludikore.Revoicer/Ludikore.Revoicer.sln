@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ludikore.Revoicer.API", "Lu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ludikore.Revoicer.Test", "Ludikore.Revoicer.Test\Ludikore.Revoicer.Test.csproj", "{2E29F98F-9197-4F2D-88E3-29C651B5F550}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ludikore.Revoicer.Model", "Ludikore.Revoicer.Model\Ludikore.Revoicer.Model.csproj", "{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ludikore.Revoicer.Services", "Ludikore.Revoicer.Services\Ludikore.Revoicer.Services.csproj", "{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
