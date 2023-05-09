@@ -1,12 +1,11 @@
 ﻿
 namespace Ludikore.Revoicer.Model
 {
-    public interface IAudioFile : IDisposable
+    public interface IAudioFile 
     {
         string Name { get; }
         string FilePath { get; }
-        long Size { get; }
         string ContentType { get; }
-        Stream Contents { get; }
+        Stream Open();
     }
 }

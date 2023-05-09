@@ -17,9 +17,11 @@ namespace Ludikore.Revoicer.API.Controllers
 
             foreach (var formFile in Request.Form.Files)
             {
-                using var file = fileRepository.CreateFile(formFile.Name, formFile.ContentType);
-                await formFile.CopyToAsync(file.Contents);
+                var file = fileRepository.CreateFile(formFile.Name, formFile.ContentType);
+                await using var fileStream = file.Open();
+                await formFile.CopyToAsync(fileStream);
                 Console.WriteLine($"File created: {file.FilePath}");
+                result.Add(file);
             }
 
             return result;

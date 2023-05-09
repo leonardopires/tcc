@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  ludikore.revoicer.api:
+    image: ${DOCKER_REGISTRY-}ludikorerevoicerapi
+    build:
+      context: .
+      dockerfile: Ludikore.Revoicer.API/Dockerfile
