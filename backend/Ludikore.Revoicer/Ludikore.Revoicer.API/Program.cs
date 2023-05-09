@@ -27,6 +27,7 @@ app.UseWebSockets();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors(a => a.AllowAnyOrigin());
 
 app.MapControllers();
 

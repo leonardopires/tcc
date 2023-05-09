@@ -5,9 +5,13 @@ public class AudioFile : IAudioFile, IDisposable
 {
     public AudioFile(string name, string contentType)
     {
-        Name = name;
         ContentType = contentType;
-        FilePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(), name);
+        
+        var directoryPath = Path.Combine(Path.GetTempPath(), "Revoicer");
+        Directory.CreateDirectory(directoryPath);
+        Name = $"{Path.GetRandomFileName()}-{name}";
+        
+        FilePath = Path.Combine(directoryPath, Name);
         Contents = File.Create(FilePath);
     }
 

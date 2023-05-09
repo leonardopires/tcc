@@ -15,7 +15,7 @@ namespace Ludikore.Revoicer.API.Controllers
             var result = new List<IAudioFile>();
             var fileRepository = new FileRepository();
 
-            foreach (var formFile in files)
+            foreach (var formFile in Request.Form.Files)
             {
                 using var file = fileRepository.CreateFile(formFile.Name, formFile.ContentType);
                 await formFile.CopyToAsync(file.Contents);

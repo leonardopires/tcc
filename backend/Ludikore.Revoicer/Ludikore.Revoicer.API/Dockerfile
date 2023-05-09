@@ -18,5 +18,6 @@ RUN dotnet publish "Ludikore.Revoicer.API.csproj" -c Release -o /app/publish /p:
 
 FROM base AS final
 WORKDIR /app
+VOLUME /data
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Ludikore.Revoicer.API.dll"]

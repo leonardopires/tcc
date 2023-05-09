@@ -23,6 +23,7 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true,
+      "commandLineArgs": "-v ./data /data",
       "useSSL": true
     }
   },

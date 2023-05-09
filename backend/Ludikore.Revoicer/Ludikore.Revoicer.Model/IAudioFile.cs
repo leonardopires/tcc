@@ -7,6 +7,6 @@ namespace Ludikore.Revoicer.Model
         string FilePath { get; }
         long Size { get; }
         string ContentType { get; }
-        Stream Contents { get; }}
+        Stream Contents { get; }
     }
 }
