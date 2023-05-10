@@ -665,5 +665,6 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,dotnetcore
-Save to Dropbox's Sidebar Button
-Save quote to DropboxCopy quote
+
+*.pickle
+*/Ludikore.Revoicer/data/

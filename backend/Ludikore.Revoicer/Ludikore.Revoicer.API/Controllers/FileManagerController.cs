@@ -10,18 +10,21 @@ namespace Ludikore.Revoicer.API.Controllers
     public class FileManagerController : ControllerBase
     {
         [HttpPost("upload")]
-        public async Task<IList<IAudioFile>> UploadFiles(IList<IFormFile> files)
+        public async Task<IList<IFile>> UploadFiles(IList<IFormFile> files)
         {
-            var result = new List<IAudioFile>();
+            var result = new List<IFile>();
             var fileRepository = new FileRepository();
+            var splitter = new SplitterService();
 
             foreach (var formFile in Request.Form.Files)
             {
-                var file = fileRepository.CreateFile(formFile.Name, formFile.ContentType);
-                await using var fileStream = file.Open();
-                await formFile.CopyToAsync(fileStream);
+                await using var contents = formFile.OpenReadStream();
+                var file = await fileRepository.CreateFile(formFile.Name, formFile.ContentType, contents);
+                
                 Console.WriteLine($"File created: {file.FilePath}");
                 result.Add(file);
+
+                await splitter.SubmitFile(file);
             }
 
             return result;
