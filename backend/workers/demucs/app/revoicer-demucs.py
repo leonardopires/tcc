@@ -5,12 +5,15 @@ import boto3
 
 from time import sleep
 
+# Settings
+ENDPOINT_URL = "http://localstack:4566"
+AWS_REGION = "us-east-1"
+QUEUE_NAME = 'revoicer-demucs'
+
 print("Starting...")
 
-sqs = boto3.client("sqs", endpoint_url="http://localstack:4566", region_name="us-east-1")
-s3 = boto3.client("s3", endpoint_url="http://localstack:4566", region_name="us-east-1")
-
-QUEUE_NAME = 'revoicer-demucs'
+sqs = boto3.client("sqs", endpoint_url=ENDPOINT_URL, region_name=AWS_REGION)
+s3 = boto3.client("s3", endpoint_url=ENDPOINT_URL, region_name=AWS_REGION)
 
 
 def ensure_queue_exists(queue_name):
@@ -55,8 +58,8 @@ def receive_message(queue_name):
         receipt_handle = message["ReceiptHandle"]
         body = message["Body"]
         print(body)
-#    else:
-#        print("No message found")
+    #    else:
+    #        print("No message found")
 
     return receipt_handle, body, message
 
