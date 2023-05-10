@@ -23,8 +23,6 @@ namespace Ludikore.Revoicer.API.Controllers
                 
                 Console.WriteLine($"File created: {file.FilePath}");
                 result.Add(file);
-
-                await splitter.SubmitFile(file);
             }
 
             return result;

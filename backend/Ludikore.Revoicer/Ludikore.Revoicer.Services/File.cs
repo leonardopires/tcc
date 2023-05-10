@@ -6,6 +6,9 @@ namespace Ludikore.Revoicer.Model;
 
 public class File : IFile
 {
+    public File()
+    {
+    }
 
     public File(string name, string contentType, string directoryPath)
     {
@@ -14,9 +17,9 @@ public class File : IFile
         FilePath = Path.Combine(directoryPath, name);
     }
 
-    public string Name { get; }
+    public string Name { get; set; }
     
-    public string FilePath { get; }
+    public string FilePath { get; set; }
 
-    public string ContentType { get;  }
+    public string ContentType { get; set; }
 }

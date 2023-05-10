@@ -1,3 +1,4 @@
+using Ludikore.Revoicer.API.Hubs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -10,8 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer()
+    .AddSwaggerGen()
+    .AddCors()
+    .AddSignalR();
+
 
 var app = builder.Build();
 
@@ -27,8 +31,15 @@ app.UseWebSockets();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors(a => a.AllowAnyOrigin());
+app.UseCors(
+    a => a
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .SetIsOriginAllowed(host => true)
+);
 
 app.MapControllers();
+app.MapHub<RevoicerHub>("/api/revoicer");
 
 app.Run();
