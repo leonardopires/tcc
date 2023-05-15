@@ -3,6 +3,6 @@ import React from "react";
 
 export function LogoText() {
   return <Typography variant={"h6"} color={"inherit"} noWrap>
-    Song Splitter
+    Revoicer
   </Typography>;
 }

@@ -1,17 +1,19 @@
 import React from 'react';
 import './App.css';
-import {Box, Container, createTheme, CssBaseline, ThemeProvider, Typography} from "@mui/material";
+import {Box, Button, Container, createTheme, CssBaseline, ThemeProvider, Typography} from "@mui/material";
 import {AppToolbar} from "../molecules/AppToolbar";
 import {FileSelector} from "../atoms/FileSelector";
 import {setSongFiles} from "../features/uploadSong/uploadSongsSlice";
 import {useAppDispatch, useAppSelector} from "./hooks";
 import {uploadSongFiles} from "../features/uploadSong/uploadSongFiles";
+import {splitSongs} from "../features/splitter/splitSongs";
 
 
 const theme = createTheme();
 
 function App() {
   const dispatch = useAppDispatch();
+  const files = useAppSelector(state => state.uploadSong.uploadedFiles)
 
   return (
     <ThemeProvider theme={theme}>
@@ -36,7 +38,14 @@ function App() {
               <FileSelector
                 id={"song"}
                 onChange={(files) => dispatch(uploadSongFiles(files))}
+                canAdd={files.length === 0}
               />
+              <Button
+                variant={"outlined"}
+                color={"primary"}
+                disabled={files.length === 0}
+                onClick={() => dispatch(splitSongs(files))}
+              >Split</Button>
             </form>
           </Container>
         </Box>

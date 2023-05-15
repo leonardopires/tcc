@@ -1,1 +1,0 @@
-git+https://github.com/leonardopires/demucs.git@main#egg=demucs
