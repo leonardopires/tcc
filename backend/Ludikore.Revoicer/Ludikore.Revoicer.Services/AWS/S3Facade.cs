@@ -54,18 +54,28 @@ namespace Ludikore.Revoicer.Services.AWS
             return bucketLocation;
         }
 
-        public async Task PutFile(string bucketName, IFile file)
+        public async Task PutFile(string bucketName, IFileDescriptor fileDescriptor)
         {
             // 2. Put the object-set ContentType and add metadata.
             var request = new PutObjectRequest
             {
                 BucketName = bucketName,
-                Key = file.FilePath,
-                FilePath = file.FilePath,
-                ContentType = file.ContentType,
+                Key = fileDescriptor.FilePath,
+                FilePath = fileDescriptor.FilePath,
+                ContentType = fileDescriptor.ContentType,
             };
 
             var response = await s3.PutObjectAsync(request);
+        }
+
+        public async Task<Stream> GetFile(string bucketName, IFileDescriptor fileDescriptor)
+        {
+            var localFile = Path.Combine(Path.GetTempPath(), fileDescriptor.FilePath);
+            await s3.DownloadToFilePathAsync(bucketName, fileDescriptor.FilePath, localFile, new Dictionary<string, object>());
+            await using var fileStream = File.OpenRead(localFile);
+            var memoryStream = new MemoryStream();
+            await fileStream.CopyToAsync(memoryStream);
+            return memoryStream;
         }
     }
 }

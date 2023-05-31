@@ -1,4 +1,5 @@
-﻿using Ludikore.Revoicer.Model;
+﻿using System.Text.RegularExpressions;
+using Ludikore.Revoicer.Model;
 using System.Xml.Linq;
 using Amazon;
 using Amazon.Runtime;
@@ -6,7 +7,6 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon.S3.Model;
 using Ludikore.Revoicer.Services.AWS;
-using File = Ludikore.Revoicer.Model.File;
 
 namespace Ludikore.Revoicer.Services
 {
@@ -20,16 +20,21 @@ namespace Ludikore.Revoicer.Services
             s3 = new S3Facade();
         }
 
-        public async Task<IFile> CreateFile(string name, string contentType, Stream contents)
+        public async Task<IFileDescriptor> CreateFile(string name, string contentType, Stream contents)
         {
-            var actualName = string.Join(string.Empty, name.Where(c => !Path.GetInvalidFileNameChars().Contains(c)));
-            var directoryPath = Path.Combine("/data", Guid.NewGuid().ToString());
+            var guid = Guid.NewGuid().ToString();
+            var extension = Path.GetExtension(name);
+            var extensionlessName = Path.GetFileNameWithoutExtension(name);
+            var sanitizedName = Regex.Replace(extensionlessName, "[^A-z0-9]+|\\+", string.Empty);
+            var actualName = Path.ChangeExtension($"{guid}_{sanitizedName}", extension);
+            var directoryPath = Path.Combine("/data/input", guid);
+
             Directory.CreateDirectory(directoryPath);
 
-            var file = new File(name, contentType, directoryPath);
+            var file = new FileDescriptor(actualName, contentType, directoryPath);
 
 
-            await using (var fileStream = System.IO.File.Create(file.FilePath))
+            await using (var fileStream = File.Create(file.FilePath))
             {
                 await contents.CopyToAsync(fileStream);
             }
@@ -41,5 +46,14 @@ namespace Ludikore.Revoicer.Services
             return file;
         }
 
+        public async Task<Stream> GetFile(IFileDescriptor file)
+        {
+            return await s3.GetFile(_bucketName, file);
+        }
+
+        public void DeleteFile(FileDescriptor file)
+        {
+            File.Delete(file.FilePath);
+        }
     }
 }

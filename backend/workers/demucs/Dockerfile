@@ -21,20 +21,30 @@ RUN apt update && apt install -y --no-install-recommends \
 RUN git clone -b main --single-branch https://github.com/facebookresearch/demucs /lib/demucs
 WORKDIR /lib/demucs
 
-ENV PYTHONUNBUFFERED 1
-
 # Install dependencies
 RUN python3 -m pip install -e . --no-cache-dir
 # Run once to ensure demucs works and trigger the default model download
-RUN python3 -m demucs -d cpu test.mp3 
+RUN python3 -m demucs -d cpu test.mp3
 # Cleanup output - we just used this to download the model
 RUN rm -r separated
 
-COPY ./app /app
+ENV PYTHONUNBUFFERED 1
+
 VOLUME /app
 VOLUME /data
 WORKDIR /app
 
-RUN python3 -m pip install boto3
+# Install dependencies
+RUN python3 -m pip install \
+    boto3==1.26.131 \
+    botocore==1.29.131 \
+    jmespath==1.0.1 \
+    pip==22.0.4 \
+    python-dateutil==2.8.2 \
+    s3transfer==0.6.1 \
+    setuptools==58.1.0 \
+    six==1.16.0 \
+    urllib3==1.26.15
+
 # RUN python3 -m pip install git+https://github.com/facebookresearch/demucs.git@main#egg=demucs
-ENTRYPOINT env python3 /app/revoicer-demucs.py
+ENTRYPOINT env python3 -m backend.workers.demucs

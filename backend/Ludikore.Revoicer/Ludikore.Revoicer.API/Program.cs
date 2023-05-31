@@ -14,7 +14,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .AddCors()
-    .AddSignalR();
+    .AddSignalR(options =>
+    {
+        options.EnableDetailedErrors = true;
+    });
 
 
 var app = builder.Build();
@@ -29,8 +32,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseWebSockets();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 app.UseCors(
     a => a
         .AllowAnyMethod()

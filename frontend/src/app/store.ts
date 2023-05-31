@@ -1,9 +1,9 @@
 import {AnyAction, configureStore, ThunkAction} from "@reduxjs/toolkit";
-import {uploadSongsSliceReducer} from "../features/uploadSong/uploadSongsSlice";
+import {revoicerSliceReducer} from "../features/revoicer/revoicerSlice";
 
 export const store = configureStore({
   reducer: {
-    uploadSong: uploadSongsSliceReducer
+    revoicer: revoicerSliceReducer
   },
 });
 

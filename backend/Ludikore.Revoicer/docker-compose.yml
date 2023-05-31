@@ -6,3 +6,31 @@ services:
     build:
       context: .
       dockerfile: Ludikore.Revoicer.API/Dockerfile
+
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+  
+  demucs:
+    build:
+      context: ../workers/demucs      
+      dockerfile: Dockerfile
+
+    depends_on:
+      - localstack
+    volumes:
+      - ../:/app/backend/
+      - ../data/demucs:/data
+
+
+  svc:
+    build:
+      context: ../workers/svc
+      dockerfile: Dockerfile
+
+    depends_on:
+      - localstack
+    volumes:
+      - ../:/app/backend/
+      - ../data/svc:/data
+      - ../models:/models

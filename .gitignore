@@ -668,3 +668,5 @@ FodyWeavers.xsd
 
 *.pickle
 */Ludikore.Revoicer/data/
+
+backend/models/

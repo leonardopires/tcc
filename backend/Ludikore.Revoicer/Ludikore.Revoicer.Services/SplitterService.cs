@@ -3,23 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ludikore.Revoicer.Model;
-using Ludikore.Revoicer.Services.AWS;
 
 namespace Ludikore.Revoicer.Services
 {
-    public class SplitterService
+    public class SplitterService : QueueBasedService<RevoicerJob, RevoicerJob>
     {
-        private SQSFacade sqs;
-
-        public SplitterService()
+        public SplitterService() : base("revoicer-demucs-input.fifo", "revoicer-demucs-output.fifo")
         {
-            sqs = new SQSFacade();
-        }
-
-        public async Task SubmitFile(IFile file)
-        {
-            await sqs.SendMessage("revoicer-demucs", file);
         }
     }
 }

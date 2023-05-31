@@ -2,8 +2,6 @@ version: '3.4'
 
 services:
   localstack:
-    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
-    image: localstack/localstack
     ports:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559"  # external services port range
@@ -16,30 +14,37 @@ services:
       - $HOME/.aws/credentials:/home/app/.aws/credentials:ro
   
   demucs:
-    build:
-      context: ../workers/demucs      
-      dockerfile: Dockerfile
     environment:
       - AWS_ACCESS_KEY_ID=AKIA2WKJWLHNGDV7FA6A
       - AWS_SECRET_ACCESS_KEY=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
 
-    depends_on:
-      - localstack
-    volumes:
-      - ../workers/demucs/app/:/app
-      - ./separated:/app/separated
-      - ./data:/data
     deploy:
       resources:
         limits:
-          cpus: '12'
-          memory: 16G
+          cpus: '4'
+          memory: 8G
         reservations:
           devices:
             - driver: nvidia
               capabilities: [gpu]
     
 
+  svc:
+    environment:
+      - AWS_ACCESS_KEY_ID=AKIA2WKJWLHNGDV7FA6A
+      - AWS_SECRET_ACCESS_KEY=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
+
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    
+  
   ludikore.revoicer.api:
     depends_on:
       - localstack
@@ -55,4 +60,4 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      - ./data:/data
+      - ../data:/data
