@@ -107,7 +107,7 @@ class WorkerBase(metaclass=ABCMeta):
 
         print(f"Remote path 1 {remote_path}")
 
-        files_to_upload, folder_name, output_path, _ = self.get_files_to_upload(local_path, remote_path, input_message)
+        files_to_upload, folder_name, output_path, remote_path = self.get_files_to_upload(local_path, remote_path, input_message)
 
         print(f"Remote path 2 {remote_path}")
 

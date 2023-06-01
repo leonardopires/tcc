@@ -44,7 +44,7 @@ class SvcWorker(WorkerBase):
 
     def get_path_details(self, local_path, remote_path, input_message):
         output_dir = self.get_output_dir(local_path)
-        file_name = os.path.dirname(local_path)
+        file_name = os.path.basename(local_path)
         remote_path = self.get_remote_path(input_message)
         return file_name, output_dir, remote_path
 

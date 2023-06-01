@@ -92,7 +92,21 @@ function App() {
                 onClick={() => dispatch(uploadFiles())}
               >Upload</Button>
 
-
+              {files.map(file => (
+                <Fragment key={"original_" + file.name}>
+                  <h3>{file.name}</h3>
+                  <div>
+                    <div key={"original_" + file.filePath}>
+                      <ReactAudioPlayer
+                        src={`${AppConfig.api.baseURL}FileManager/download?filePath=${encodeURIComponent(file.filePath as string)}`}
+                        controls={true}
+                      />
+                    </div>
+                  </div>
+                </Fragment>
+              ))
+              }
+              <h2>Split:</h2>
               <Button
                 variant={"outlined"}
                 color={"primary"}
@@ -121,7 +135,7 @@ function App() {
               <Typography
                 color={"text.primary"}
               >
-                Voice:
+                Revoice:
               </Typography>
               <Select
                 onChange={(event) => dispatch(setVoice(event.target.value as string))}
