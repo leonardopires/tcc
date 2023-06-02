@@ -21,7 +21,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4'
+          cpus: '12'
           memory: 8G
         reservations:
           devices:
@@ -37,7 +37,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4'
+          cpus: '12'
           memory: 8G
         reservations:
           devices:

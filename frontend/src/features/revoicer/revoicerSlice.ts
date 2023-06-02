@@ -3,17 +3,19 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 export interface IRevoiceJob {
   contentType?: string;
   jobId?: string;
+  operationId?: string;
   voice: string;
   name: string;
-  filePath?: string;
+  filePath: string;
   size: number;
-  path: string;
   type: string;
   extension: string | undefined;
   lastModified?: string | Date;
   lastModifiedDate?: string | Date;
-  separatedFiles: string[];
-  updatedVocals: string[];
+  input: string[];
+  split: string[];
+  revoiced: string[];
+  [index: string]: any;
 }
 
 export enum RevoicerStatus {
@@ -34,7 +36,7 @@ interface IRevoicerState {
 }
 
 const initialState: IRevoicerState = {
-  voice: "NoelGallagher",
+  voice: "LiamGallagher",
   status: RevoicerStatus.Empty,
   uploadedFiles: [],
 };

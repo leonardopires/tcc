@@ -6,9 +6,12 @@ public class RevoicerJob : IRevoicerJob
 {
     public RevoicerJob()
     {
-        SeparatedFiles = new List<string>();
-        UpdatedVocals = new List<string>();
-        JobId = Guid.NewGuid().ToString();
+        Split = new List<string>();
+        Revoiced = new List<string>();
+        Input = new List<string>();
+        var jobId = Guid.NewGuid().ToString();
+        JobId = jobId;
+        OperationId = jobId;
     }
 
     public string Name { get; set; }
@@ -16,9 +19,11 @@ public class RevoicerJob : IRevoicerJob
     public string FilePath { get; set; }
 
     public string ContentType { get; set; }
+    public string OperationId { get; set; }
     public string Voice { get; set; }
+    public List<string> Input { get; set; }
 
-    public List<string> SeparatedFiles { get; set;  }
-    public List<string> UpdatedVocals { get; set; }
+    public List<string> Split { get; set;  }
+    public List<string> Revoiced { get; set; }
     public string JobId { get; set; }
 }

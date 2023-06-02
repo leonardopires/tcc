@@ -23,13 +23,19 @@ namespace Ludikore.Revoicer.API.Controllers
 
                 Console.WriteLine($"File created: {fileDescriptor.FilePath}");
 
+                var filePath = fileDescriptor.FilePath.StartsWith("/")
+                    ? fileDescriptor.FilePath.Substring(1)
+                    : fileDescriptor.FilePath;
                 var jobInput = new RevoicerJob()
                 {
                     ContentType = fileDescriptor.ContentType,
-                    FilePath = fileDescriptor.FilePath.StartsWith("/")
-                        ? fileDescriptor.FilePath.Substring(1)
-                        : fileDescriptor.FilePath,
+                    FilePath = filePath,
                     Name = fileDescriptor.Name,
+                    OperationId = Guid.NewGuid().ToString(),
+                    Input =
+                    {
+                        filePath,
+                    },
                 };
 
                 result.Add(jobInput);
@@ -52,6 +58,28 @@ namespace Ludikore.Revoicer.API.Controllers
                 await using var stream = await fileRepository.GetFile(file) as MemoryStream;
                 Console.WriteLine("Creating response");
                 return new FileContentResult(stream.ToArray(), "audio/wav");
+            }
+            finally
+            {
+                Console.WriteLine("Response sent");
+                // fileRepository.DeleteFile(file);
+            }
+        }
+
+        [HttpGet("redirect")]
+        public async Task<RedirectResult> RedirectToFile([FromQuery] string filePath)
+        {
+            var directoryPath = Path.GetDirectoryName(filePath);
+            var fileName = Path.GetFileName(filePath);
+
+            var file = new FileDescriptor(fileName, "audio/wav", directoryPath);
+            var fileRepository = new FileRepository();
+            try
+            {
+                Console.WriteLine("Getting file from S3");
+                var url = await fileRepository.GetFileUrl(file);
+                Console.WriteLine("Redirecting to S3 URL: {0}", url);
+                return Redirect(url);
             }
             finally
             {

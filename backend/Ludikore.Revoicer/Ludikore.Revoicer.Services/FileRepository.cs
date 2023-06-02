@@ -26,7 +26,7 @@ namespace Ludikore.Revoicer.Services
             var extension = Path.GetExtension(name);
             var extensionlessName = Path.GetFileNameWithoutExtension(name);
             var sanitizedName = Regex.Replace(extensionlessName, "[^A-z0-9]+|\\+", string.Empty);
-            var actualName = Path.ChangeExtension($"{guid}_{sanitizedName}", extension);
+            var actualName = Path.ChangeExtension(sanitizedName, extension);
             var directoryPath = Path.Combine("/data/input", guid);
 
             Directory.CreateDirectory(directoryPath);
@@ -49,6 +49,11 @@ namespace Ludikore.Revoicer.Services
         public async Task<Stream> GetFile(IFileDescriptor file)
         {
             return await s3.GetFile(_bucketName, file);
+        }
+
+        public async Task<string> GetFileUrl(IFileDescriptor file)
+        {
+            return await s3.GetFileUrl(_bucketName, file);
         }
 
         public void DeleteFile(FileDescriptor file)

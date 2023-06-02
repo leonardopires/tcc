@@ -2,10 +2,13 @@
 {
     public interface IRevoicerJob : IQueueJobData, IFileDescriptor
     {
+        string OperationId { get; set; }
         string Voice { get; set; }
 
-        List<string> SeparatedFiles { get; }
+        List<string> Input { get; set; }
 
-        List<string> UpdatedVocals { get;  }
+        List<string> Split { get; }
+
+        List<string> Revoiced { get;  }
     }
 }

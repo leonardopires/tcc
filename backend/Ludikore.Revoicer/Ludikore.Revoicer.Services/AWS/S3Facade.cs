@@ -77,5 +77,18 @@ namespace Ludikore.Revoicer.Services.AWS
             await fileStream.CopyToAsync(memoryStream);
             return memoryStream;
         }
+
+        public async Task<string> GetFileUrl(string bucketName, IFileDescriptor file)
+        {
+            var additionalProperties = new Dictionary<string, object>();
+            var expiration = DateTime.Today.AddDays(7);
+
+            var presignedUrl = s3.GeneratePreSignedURL(bucketName, file.FilePath, expiration, additionalProperties);
+            if (presignedUrl.StartsWith("https://localstack"))
+            {
+                presignedUrl = presignedUrl.Replace("https://localstack", "https://revoicer.amplifyapp.localhost.localstack.cloud");
+            }
+            return presignedUrl;
+        }
     }
 }

@@ -3,6 +3,7 @@ import os
 import subprocess
 import traceback
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from types import TracebackType
 
 import boto3
@@ -17,6 +18,7 @@ class WorkerBase(metaclass=ABCMeta):
         self.s3 = boto3.client("s3", endpoint_url=endpoint_url, region_name=aws_region)
         self.input_queue_name = input_queue_name
         self.output_queue_name = output_queue_name
+        self.output_format = "mp3"
 
     def ensure_queue_exists(self, queue_name):
         response = self.sqs.create_queue(
@@ -75,8 +77,8 @@ class WorkerBase(metaclass=ABCMeta):
         response = self.sqs.send_message(
             QueueUrl=url,
             MessageBody=body,
-            MessageDeduplicationId=str(uuid.uuid4()),
-            MessageGroupId=str(uuid.uuid4()),
+            MessageDeduplicationId=str(payload["OperationId"]),
+            MessageGroupId=str(payload["JobId"]),
         )
         print("Message sent:", body)
         return response
@@ -107,17 +109,15 @@ class WorkerBase(metaclass=ABCMeta):
 
         print(f"Remote path 1 {remote_path}")
 
-        files_to_upload, folder_name, output_path, remote_path = self.get_files_to_upload(local_path, remote_path, input_message)
+        files_to_upload, folder_name, output_path, remote_path = self.get_files_to_upload(local_path, remote_path,
+                                                                                          input_message)
 
         print(f"Remote path 2 {remote_path}")
 
         for file in files_to_upload:
             output_file = os.path.join(output_path, file)
 
-            if folder_name is None:
-                s3_path = f"{remote_path}/{file}"
-            else:
-                s3_path = f"{remote_path}/{folder_name}/{file}"
+            s3_path = self.get_s3_path(file, input_message)
 
             print(f"S3 Path: {s3_path}")
             print(f"Uploading file: {output_file} to {s3_path}...")
@@ -126,6 +126,10 @@ class WorkerBase(metaclass=ABCMeta):
             print("Done")
 
         return result
+
+    @abstractmethod
+    def get_s3_path(self, file, input_message):
+        pass
 
     def get_files_to_upload(self, local_path, remote_path, input_message):
         folder_name, output_path, remote_path = self.get_path_details(local_path, remote_path, input_message)
@@ -138,28 +142,51 @@ class WorkerBase(metaclass=ABCMeta):
 
         return files_to_upload, folder_name, output_path, remote_path
 
+    @abstractmethod
     def get_path_details(self, local_path, remote_path, input_message):
-        index = local_path.rfind("/") + 1
-
-        if index > 0:
-            output_dir = self.get_output_dir(local_path)
-            file_name = local_path[index::]
-            extension_index = file_name.rfind(".")
-            folder_name = file_name[0:extension_index:]
-            output_path = os.path.join(output_dir, folder_name)
-            print(f"Input File Name: {file_name}")
-            print(f"Path: {local_path}")
-            print(f"Output Path: {output_path}")
-            dir_contents = os.listdir(output_dir)
-            print(dir_contents)
-
-            return folder_name, output_path, remote_path
-
-        return None, None, remote_path
+        pass
 
     @abstractmethod
     def get_output_dir(self, message):
         pass
+
+    @abstractmethod
+    def create_output_message(self, input_message, save_path):
+        pass
+
+    @abstractmethod
+    def get_local_path(self, file_info):
+        pass
+
+    def get_data_bucket(self):
+        return "revoicer"
+
+    def receive_from_input_queue(self):
+        return self.receive_message(self.input_queue_name)
+
+    def ensure_all_queues_exist(self):
+        self.ensure_queue_exists(self.input_queue_name)
+        self.ensure_queue_exists(self.output_queue_name)
+
+    @abstractmethod
+    def get_remote_path(self, input_message):
+        pass
+
+    def convert_file_to_output_format(self, input_file):
+        filename, _ = os.path.splitext(input_file)
+        output_file = f"{filename}.{self.output_format}"
+        subprocess.call(["ffmpeg", "-i", input_file, "-c:a", self.output_format, output_file])
+        print(f"Converted {input_file} to {self.output_format}")
+
+    def convert_folder_to_output_format(self, folder):
+        print(f"Converting .wav files in {folder} to {self.output_format}")
+        wav_files = [file for file in os.listdir(folder) if file.endswith(".wav")]
+        with ThreadPoolExecutor() as executor:
+            executor.map(self.convert_file_to_output_format, [os.path.join(folder, file) for file in wav_files])
+
+    def convert_to_output_format(self, local_path, input_message):
+        folder_name, output_path, _ = self.get_path_details(local_path, local_path, input_message)
+        self.convert_folder_to_output_format(output_path)
 
     def run(self):
         print("Starting...")
@@ -185,6 +212,7 @@ class WorkerBase(metaclass=ABCMeta):
                     self.download_from_s3(bucket, remote_path, local_path)
 
                     self.execute_command(local_path, input_message)
+                    self.convert_to_output_format(local_path, input_message)
                     results = self.upload_results(bucket, local_path, "output", input_message)
                     output_message = self.create_output_message(input_message, results)
                     self.send_message(self.output_queue_name, output_message)
@@ -196,25 +224,3 @@ class WorkerBase(metaclass=ABCMeta):
                 if receipt_handle is not None:
                     self.delete_message(self.input_queue_name, receipt_handle)
                 continue
-
-    @abstractmethod
-    def create_output_message(self, input_message, save_path):
-        pass
-
-    @abstractmethod
-    def get_local_path(self, file_info):
-        pass
-
-    def get_data_bucket(self):
-        return "revoicer"
-
-    def receive_from_input_queue(self):
-        return self.receive_message(self.input_queue_name)
-
-    def ensure_all_queues_exist(self):
-        self.ensure_queue_exists(self.input_queue_name)
-        self.ensure_queue_exists(self.output_queue_name)
-
-    @abstractmethod
-    def get_remote_path(self, input_message):
-        pass

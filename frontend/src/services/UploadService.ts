@@ -36,11 +36,12 @@ export class UploadService {
       name: file.name,
       extension: file.extension,
       voice: "NoelGallagher",
-      path: file.path,
+      filePath: file.path,
       size: file.size,
       type: file.type,
-      separatedFiles: [],
-      updatedVocals: [],
+      input: [],
+      split: [],
+      revoiced: [],
     }
   }
 }

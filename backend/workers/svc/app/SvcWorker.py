@@ -1,24 +1,25 @@
 import array
 import os.path
+import subprocess
 
 from backend.workers.common.WorkerBase import WorkerBase
 
 
 class SvcWorker(WorkerBase):
     def get_local_path(self, file_info):
-        return "/data/" + file_info["SeparatedFiles"][1]
+        return "/data/" + file_info["Split"][1]
 
     def get_remote_path(self, file_info):
-        return file_info["SeparatedFiles"][1]
+        return [str(name) for name in file_info["Split"]
+                if str(name).endswith("/vocals.wav")][0]
 
     def create_output_message(self, input_message, results):
+        voice = input_message["Voice"]
         return {
-            "JobId": input_message["JobId"],
-            "Name": input_message["Name"],
-            "FilePath": input_message["FilePath"],
-            "Voice": input_message["Voice"],
-            "SeparatedFiles": input_message["SeparatedFiles"],
-            "UpdatedVocals": results,
+            **input_message,
+            "Revoiced": [str(name) for name in results
+                         if str(name).endswith(f'{voice}.wav')
+                         or str(name).endswith(f'{voice}.{self.output_format}')],
         }
 
     def __init__(self, endpoint_url, aws_region, input_queue_name, output_queue_name):
@@ -47,4 +48,7 @@ class SvcWorker(WorkerBase):
         file_name = os.path.basename(local_path)
         remote_path = self.get_remote_path(input_message)
         return file_name, output_dir, remote_path
+
+    def get_s3_path(self, file, input_message):
+        return f"{input_message['OperationId']}/{file}"
 
