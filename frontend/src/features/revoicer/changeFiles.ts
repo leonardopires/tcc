@@ -2,6 +2,7 @@ import {ExtendedFileProps} from "react-mui-fileuploader/dist/types/index.types";
 import {IRevoiceJob, setSongFiles, revoicerSlice, setStatus, RevoicerStatus} from "./revoicerSlice";
 import {AppThunk} from "../../app/store";
 import {UploadService} from "../../services/UploadService";
+import {splitSongs} from "../splitter/splitSongs";
 
 let filesToUpload: ExtendedFileProps[] = [];
 

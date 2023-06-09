@@ -1,4 +1,5 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {IID3Tag, IID3V1Tag, IID3V2Tag} from "id3-parser/lib/interface";
 
 export interface IRevoiceJob {
   contentType?: string;
@@ -15,6 +16,7 @@ export interface IRevoiceJob {
   input: string[];
   split: string[];
   revoiced: string[];
+
   [index: string]: any;
 }
 
@@ -29,10 +31,12 @@ export enum RevoicerStatus {
   Revoiced,
 }
 
-interface IRevoicerState {
+export interface IRevoicerState {
   voice: string,
   status: RevoicerStatus,
   uploadedFiles: IRevoiceJob[];
+  songInfo?: IID3Tag,
+  artwork?: string,
 }
 
 const initialState: IRevoicerState = {
@@ -57,6 +61,12 @@ export const revoicerSlice = createSlice({
     setStatus: (state, action: PayloadAction<RevoicerStatus>) => {
       state.status = action.payload;
     },
+    setSongInfo: (state, action) => {
+      state.songInfo = action.payload;
+    },
+    setArtwork: (state, action) => {
+      state.artwork = action.payload;
+    }
   },
 });
 
@@ -64,6 +74,8 @@ export const {
   setSongFiles,
   setVoice,
   setStatus,
+  setSongInfo,
+  setArtwork,
 } = revoicerSlice.actions;
 export const revoicerSliceReducer = revoicerSlice.reducer;
 

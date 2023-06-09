@@ -4,7 +4,7 @@ import {Logo} from "../../atoms/Logo/Logo";
 import {LogoText} from "../../atoms/LogoText";
 
 export function AppToolbar() {
-  return <AppBar position="relative">
+  return <AppBar>
     <Toolbar>
       <Logo/>
       <LogoText/>

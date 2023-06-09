@@ -1,6 +1,7 @@
-import {MusicNote} from "@mui/icons-material";
+import {Image, MusicNote} from "@mui/icons-material";
 import React from "react";
+import logo from "./logo.svg";
 
 export function Logo() {
-  return <MusicNote sx={{mr: 2}}/>;
+  return <img src={logo} width={120} />;
 }

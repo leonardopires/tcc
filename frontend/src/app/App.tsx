@@ -1,19 +1,8 @@
 import React from 'react';
 import './App.css';
-import {
-  Box,
-  Button,
-  Container,
-  createTheme,
-  CssBaseline, Icon,
-  MenuItem,
-  Select,
-  ThemeProvider,
-  Typography
-} from "@mui/material";
+import {Box, Button, Container, CssBaseline, MenuItem, Select, ThemeProvider, Typography} from "@mui/material";
 import {LoadingButton} from "@mui/lab";
 import {AppToolbar} from "../molecules/AppToolbar/AppToolbar";
-import {FileSelector} from "../atoms/FileSelector";
 import {RevoicerStatus, setVoice} from "../features/revoicer/revoicerSlice";
 import {useAppDispatch, useAppSelector} from "./hooks";
 import {changeFiles, uploadFiles} from "../features/revoicer/changeFiles";
@@ -21,11 +10,11 @@ import {splitSongs} from "../features/splitter/splitSongs";
 import {revoiceSongs} from "../features/splitter/revoiceSongs";
 import {ButtonsConfig} from "./ButtonsConfig";
 import {SongList} from "../molecules/SongList";
-import {ClimbingBoxLoader, PropagateLoader, RingLoader} from "react-spinners";
 import {PlayArrow} from "@mui/icons-material";
+import {revoicerTheme} from "../theme/revoicerTheme";
+import {UploadStep} from "../organisms/UploadStep";
 
-
-const theme = createTheme();
+const theme = revoicerTheme();
 
 function play(indexesToPlay: number[]) {
   let players = [...document.getElementsByClassName("react-audio-player")].map(item => item as HTMLAudioElement);
@@ -50,8 +39,6 @@ function App() {
   const splitFiles = files.filter(file => file.split?.length > 0);
   const revoicedFiles = files.filter(file => file.revoiced?.length > 0);
 
-  console.log(splitFiles);
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
@@ -60,44 +47,29 @@ function App() {
         <Box>
           <Container>
             <form>
-              <h2>1. Upload</h2>
-              <FileSelector
-                id={"song"}
-                onChange={(files) => dispatch(changeFiles(files))}
-                canAdd={files.length === 0}
+              <UploadStep
+                onFilesSelected={(files) => dispatch(changeFiles(files))} jobs={files} status={status}
+                onUploadClick={() => dispatch(uploadFiles())} files={inputFiles}
               />
-
-              <Button
-                variant={"outlined"}
-                color={"primary"}
-                disabled={ButtonsConfig.uploadButtonDisabledWhen.includes(status)}
-                onClick={() => dispatch(uploadFiles())}
-              >Upload</Button>
-              <LoadingButton
-                loading={status === RevoicerStatus.Uploading}
-              />
-              <SongList
-                files={inputFiles}
-                type={"input"}
-              />
-              <h2>2. Split:</h2>
-              <Button
-                variant={"outlined"}
-                color={"primary"}
-                disabled={ButtonsConfig.splitButtonDisabledWhen.includes(status)}
-                onClick={() => dispatch(splitSongs())}
-              >Split</Button>
-              <LoadingButton
-                loading={status === RevoicerStatus.Splitting}
-              />
-
-              <SongList
-                files={splitFiles}
-                type={"split"}
-              />
-
               <Box>
-                <h2>3. Revoice:</h2>
+                <Typography variant={"h1"}>Uploaded</Typography>
+                <Button
+                  variant={"outlined"}
+                  color={"primary"}
+                  disabled={ButtonsConfig.splitButtonDisabledWhen.includes(status)}
+                  onClick={() => dispatch(splitSongs())}
+                >Split</Button>
+                <LoadingButton
+                  loading={status === RevoicerStatus.Splitting}
+                />
+
+                <SongList
+                  files={splitFiles}
+                  type={"split"}
+                />
+              </Box>
+              <Box>
+                <Typography variant={"h1"}>Revoice</Typography>
                 <Select
                   onChange={(event) => dispatch(setVoice(event.target.value as string))}
                   value={voice}
