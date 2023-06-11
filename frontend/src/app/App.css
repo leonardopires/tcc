@@ -6,7 +6,7 @@
 }
 
 body {
-    background: radial-gradient(63.8% 59.2% at 26.72% 36.74%, #F8DA3F 0%, #C69C10 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+    background: radial-gradient(63.8% 59.2% at 26.72% 36.74%, #F8DA3F 0%, #C69C10 100%) fixed
 }
 
 @keyframes App-logo-spin {

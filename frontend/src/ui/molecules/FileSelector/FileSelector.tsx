@@ -14,6 +14,7 @@ export interface IFileSelectorProps {
   onChange: ((files: ExtendedFileProps[]) => void);
   canAdd: boolean;
   files: ExtendedFileProps[],
+  showChangeFileMessage?: false,
 };
 
 let selectedFiles: ExtendedFileProps[] = [];
@@ -24,6 +25,7 @@ export function FileSelector(props: IFileSelectorProps) {
     onChange,
     canAdd,
     files,
+    showChangeFileMessage
   } = props;
 
   function handleChange(files: ExtendedFileProps[]) {
@@ -48,7 +50,7 @@ export function FileSelector(props: IFileSelectorProps) {
       maxUploadFiles={1}
       allowedExtensions={["mp3", "mpeg"]}
       multiFile={false}
-      acceptedType={"audio/mpeg"}
+      acceptedType={"audio/mp3"}
       bannerProps={{
         hidden: !canAdd,
       }}
@@ -60,13 +62,15 @@ export function FileSelector(props: IFileSelectorProps) {
       onError={(error) => console.error(error)}
     />
   ) : (
-    <Grid container style={theme.custom.FileUploadContainer} columns={9}>
-      <Grid item xs={8} paddingY={"1em"}>
-        <Typography>Deseja selecionar outro arquivo?</Typography>
+    (showChangeFileMessage ? (
+      <Grid container style={theme.custom.FileUploadContainer} columns={9}>
+        <Grid item xs={8} paddingY={"1em"}>
+          <Typography>Deseja selecionar outro arquivo?</Typography>
+        </Grid>
+        <Grid item xs={1}>
+          <IconButton onClick={() => onChange([])}><UploadIcon/></IconButton>
+        </Grid>
       </Grid>
-      <Grid item xs={1}>
-        <IconButton onClick={() => onChange([])}><UploadIcon/></IconButton>
-      </Grid>
-    </Grid>
+    ) : <></>)
   );
 }

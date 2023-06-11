@@ -1,9 +1,11 @@
 import {AnyAction, configureStore, ThunkAction} from "@reduxjs/toolkit";
 import {revoicerSliceReducer} from "../features/revoicer/revoicerSlice";
+import {playerSliceReducer} from "../features/player/playerSlice";
 
 export const store = configureStore({
   reducer: {
-    revoicer: revoicerSliceReducer
+    revoicer: revoicerSliceReducer,
+    player: playerSliceReducer,
   },
 });
 

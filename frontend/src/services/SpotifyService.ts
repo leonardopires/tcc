@@ -1,4 +1,5 @@
 import SpotifyWebApi from "spotify-web-api-node";
+import {AppConfig} from "../AppConfig";
 
 export class SpotifyService {
   private api: SpotifyWebApi;
@@ -9,7 +10,7 @@ export class SpotifyService {
     this.api = new SpotifyWebApi({
       clientId: "2a368592571f435d8949d10bae3f1b04",
       clientSecret: "8b44950216cf413a967675dcf49cb84d",
-      redirectUri: "http://localhost:3000/",
+      redirectUri: AppConfig.ui.baseURL,
     });
   }
 

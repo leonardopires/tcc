@@ -16,6 +16,7 @@ export interface RevoicerTheme extends Theme {
 
 export function revoicerTheme(): RevoicerTheme {
   let alfaSlabOne = "'Alfa Slab One', serif";
+  let poppins = "'Poppins', Arial, sans-serif";
   let title = {
     fontFamily: alfaSlabOne,
     marginBottom: "0.5em",
@@ -52,9 +53,13 @@ export function revoicerTheme(): RevoicerTheme {
         styleOverrides: {
           outlined: {
             borderColor: "#1F1808 !important",
+            borderWidth: "3px",
             borderRadius: "2em",
             backgroundColor: "transparent",
             color: "#1F1808 !important",
+            ":hover": {
+              borderWidth: "3px",
+            },
           },
           containedPrimary: {
             backgroundColor: "#1F1808",
@@ -73,13 +78,14 @@ export function revoicerTheme(): RevoicerTheme {
     typography: {
       allVariants: {
         color: "#000",
-        fontFamily: "'Poppins', Arial, sans-serif"
+        fontFamily: poppins,
       },
       h1: {...title, fontSize: "3em"},
       h2: {...title, fontSize: "2em"},
       h3: {...title, fontSize: "1.8em"},
-      h4: {...title, fontSize: "1.5em"},
-      h5: {...title, fontSize: "1em"},
+      h4: {...title, fontSize: "1.4em", marginBottom: 0},
+      h5: { fontFamily: poppins, fontSize: "0.9em", fontWeight: 250, marginBottom: "0.5em"},
+      h6: {...title, fontSize: "1em", marginBottom: 0, marginTop: "-0.2em"},
     },
   });
   let theme: RevoicerTheme = {
@@ -89,10 +95,11 @@ export function revoicerTheme(): RevoicerTheme {
       FileUploadContainer: {
         background: "rgba(89, 75, 22, 0.15)",
         borderColor: "#1F1808",
-        borderWidth: "6px",
+        borderWidth: "3px",
         borderStyle: "dashed",
         borderRadius: 0,
-        padding: "1em 3em",
+        padding: "0.2em 3em",
+        marginBottom: "2em",
       },
       FileUploadLabels: {
         textAlign: "left",
