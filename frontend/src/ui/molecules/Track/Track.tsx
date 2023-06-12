@@ -7,34 +7,15 @@ import {AppConfig} from "../../../AppConfig";
 import {Download, Share} from "@mui/icons-material";
 import {PlayerService} from "../../../services/PlayerService";
 import {useAppSelector} from "../../../app/hooks";
-import {IVoice} from "../../../features/revoicer/revoicerSlice";
 import {MuteButton} from "../MuteButton/MuteButton";
+import {getTrackInfo} from "./GetTrackInfo";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {ITrack} from "../../../features/revoicer/ITrack";
 
 const playerService = PlayerService.instance();
 
-function getTrackInfo(childFile: string, voices: IVoice[]) {
-  let fileName = FileService.formatName(childFile);
-  let id = fileName.replace(/\.mp3$/, "");
-  let name;
-
-  switch (id) {
-    case "no_vocals":
-      name = "Instrumental";
-      break;
-
-    case "vocals":
-      name = "Vocal Original";
-      break;
-
-    default:
-      name = voices.find(voice => voice.id === id)?.name ?? id;
-      break;
-  }
-  return {name, id};
-}
-
-export function Track({file, type}: { file: string, type: string }) {
-  let id = FileService.formatName(file);
+export function Track({track}: { track: ITrack }) {
+  let id = track.id;
   let [muted, setMuted] = useState(playerService.getPlayer(id)?.muted);
 
   let voices = useAppSelector(state => state.revoicer.voices);
@@ -55,8 +36,6 @@ export function Track({file, type}: { file: string, type: string }) {
     }
   }
 
-  let trackInfo = getTrackInfo(file, voices);
-
   return (
     <Paper
       variant={"outlined"}
@@ -68,26 +47,29 @@ export function Track({file, type}: { file: string, type: string }) {
         border: "1px solid #AB852D",
         borderRadius: "0.7em",
       }}>
-      <Grid container key={`${type}_${file}`} columns={20}>
+      <Grid container columns={20}>
         <Grid item xs={1} style={{...itemStyle, ...nonButtonItemStyle}}>
           <TrackStatus status={!muted}/>
         </Grid>
-        <Grid item xs={14} style={{...itemStyle, ...nonButtonItemStyle}}>
-          <Typography variant={"h6"}>{trackInfo.name}</Typography>
+        <Grid item xs={1} style={{...itemStyle, ...nonButtonItemStyle}}>
+          <FontAwesomeIcon icon={track.icon} />
+        </Grid>
+        <Grid item xs={13} style={{...itemStyle, ...nonButtonItemStyle}}>
+          <Typography variant={"h6"}>{track.name}</Typography>
 
           <ReactAudioPlayer
-            id={trackInfo.id}
-            src={`${AppConfig.api.baseURL}FileManager/redirect?filePath=%2F${encodeURIComponent(file)}`}
+            id={track.id}
+            src={`${AppConfig.api.baseURL}FileManager/redirect?filePath=%2F${encodeURIComponent(track.filePath)}`}
             controls={false}
             muted={muted}
             ref={registerPlayer}
           />
         </Grid>
         <Grid item xs={3} style={itemStyle}>
-          <IconButton>
+          <IconButton style={{visibility: "hidden"}}>
             <Share/>
           </IconButton>
-          <IconButton>
+          <IconButton  style={{visibility: "hidden"}}>
             <Download/>
           </IconButton>
         </Grid>

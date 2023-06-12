@@ -1,49 +1,8 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {IID3Tag, IID3V1Tag, IID3V2Tag} from "id3-parser/lib/interface";
+import {IRevoiceJob} from "./IRevoiceJob";
+import {RevoicerStatus} from "./revoicerStatus";
+import {IRevoicerState} from "./IRevoicerState";
 
-export interface IVoice {
-  name: string,
-  id: string,
-}
-
-export interface IRevoiceJob {
-  contentType?: string;
-  jobId?: string;
-  operationId?: string;
-  voice: string;
-  name: string;
-  filePath: string;
-  size: number;
-  type: string;
-  extension: string | undefined;
-  lastModified?: string | Date;
-  lastModifiedDate?: string | Date;
-  input: string[];
-  split: string[];
-  revoiced: string[];
-
-  [index: string]: any;
-}
-
-export enum RevoicerStatus {
-  Empty,
-  FilesSelected,
-  Uploading,
-  Uploaded,
-  Splitting,
-  Split,
-  Revoicing,
-  Revoiced,
-}
-
-export interface IRevoicerState {
-  voice: string,
-  status: RevoicerStatus,
-  uploadedFiles: IRevoiceJob[];
-  songInfo?: IID3Tag,
-  artwork?: string,
-  voices: IVoice[];
-}
 
 const initialState: IRevoicerState = {
   voice: "LiamGallagher",

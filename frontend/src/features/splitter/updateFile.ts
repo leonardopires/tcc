@@ -1,4 +1,4 @@
-import {IRevoiceJob} from "../revoicer/revoicerSlice";
+import {IRevoiceJob} from "../revoicer/IRevoiceJob";
 
 
 export function updateFile(files: IRevoiceJob[], outputFile: IRevoiceJob) {

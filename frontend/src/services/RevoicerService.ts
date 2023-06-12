@@ -1,8 +1,10 @@
-import {IRevoiceJob, RevoicerStatus, setSongFiles, setStatus} from "../features/revoicer/revoicerSlice";
+import {setSongFiles, setStatus} from "../features/revoicer/revoicerSlice";
 import {AppConfig} from "../AppConfig";
 import * as signalR from "@microsoft/signalr";
 import {HubConnection, HubConnectionState} from "@microsoft/signalr";
 import {Func1} from "@reduxjs/toolkit";
+import {IRevoiceJob} from "../features/revoicer/IRevoiceJob";
+import {RevoicerStatus} from "../features/revoicer/revoicerStatus";
 
 export class RevoicerService {
   private baseURL: string = AppConfig.api.baseURL;

@@ -9,11 +9,17 @@ let playerService = PlayerService.instance();
 
 export function uploadAndSplit(): AppThunk<Promise<void>> {
   return async (dispatch, getState) => {
-    await dispatch(uploadFiles());
+    let previousState = getState().player.state;
+
     await dispatch(setPlayingState(PlayerState.Paused));
+    await dispatch(uploadFiles());
+    await dispatch(setPlayingState(previousState));
     await dispatch(splitSongs());
     playerService.mutePlayer("originalAudioPlayer", true);
     await dispatch(setPlayingState(PlayerState.Paused));
+
+    previousState = getState().player.state;
+    await dispatch(setPlayingState(previousState));
   };
 }
 

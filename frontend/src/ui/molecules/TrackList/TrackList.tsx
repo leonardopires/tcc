@@ -1,25 +1,31 @@
-import {IRevoiceJob} from "../../../features/revoicer/revoicerSlice";
-import React, {Fragment} from "react";
+import React from "react";
 import {Track} from "../Track/Track";
+import {getTrackInfo} from "../Track/GetTrackInfo";
+import {IVoice} from "../../../features/revoicer/IVoice";
+import {TrackType} from "../../../features/revoicer/TrackType";
+import {Box, Typography} from "@mui/material";
 
 
-export function TrackList({files, type}: { files: IRevoiceJob[], type: string }) {
+export function TrackList({files, voices}: { files: string[], voices: IVoice[] }) {
+  let tracks = files.filter(childFile => childFile.endsWith(".aac") || childFile.endsWith(".mp3"))
+    .map(file => getTrackInfo(file, voices));
 
-  return <>
-    {files.map(file => {
-      let fileElement = file[type] as string[];
-      return (
-        <Fragment key={`${type}_${file.name}`}>
-          <div>
-            {fileElement
-              .filter(childFile => childFile.endsWith(".aac") || childFile.endsWith(".mp3"))
-              .map(childFile => {
-                return <Track file={childFile} type={type} />;
-              })
-            }
-          </div>
-        </Fragment>
-      );
-    })}
-  </>;
+  return (
+    <>
+      <Typography variant={"h4"}>Vocais</Typography>
+      <Box>
+        {tracks.filter(track => track.type === TrackType.Vocal)
+          .map(track => {
+            return <Track key={track.id} track={track}/>;
+          })}
+      </Box>
+      <Typography variant={"h4"}>Instrumentos</Typography>
+      <Box>
+        {tracks.filter(track => track.type === TrackType.Instrument)
+          .map(track => {
+            return <Track key={track.id} track={track}/>;
+          })}
+      </Box>
+    </>
+  );
 }

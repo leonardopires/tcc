@@ -5,7 +5,7 @@ from backend.workers.common.WorkerBase import WorkerBase
 
 class DemucsWorker(WorkerBase):
     def model(self):
-        return "mdx_extra"
+        return "htdemucs_6s"
 
     def shifts(self):
         return 2
@@ -37,7 +37,6 @@ class DemucsWorker(WorkerBase):
             "demucs",
             "-d=cuda",
             f"--name={model}",
-            "--two-stems=vocals",
             "--jobs=12",
             f"--shifts={shifts}",
             '--filename',

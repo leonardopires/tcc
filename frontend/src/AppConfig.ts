@@ -6,5 +6,5 @@ export const AppConfig = {
   },
   ui: {
     baseURL: `http://${serverUrl}:3000`
-  }
+  },
 };

@@ -1,7 +1,8 @@
 import axios from "axios";
 import {ExtendedFileProps} from "react-mui-fileuploader/dist/types/index.types";
 import {AppConfig} from "../AppConfig";
-import {IRevoiceJob} from "../features/revoicer/revoicerSlice";
+
+import {IRevoiceJob} from "../features/revoicer/IRevoiceJob";
 
 export class UploadService {
   private baseURL: string = AppConfig.api.baseURL;

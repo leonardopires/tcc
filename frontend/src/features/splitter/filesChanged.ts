@@ -24,6 +24,7 @@ export function filesChanged(files: ExtendedFileProps[]): AppThunk<Promise<void>
       }
 
       file.path = urlService.getBase64URL(buffer, "audio/mpeg");
+      await dispatch(changeFiles(files));
 
       let image = null;
 
@@ -68,7 +69,5 @@ export function filesChanged(files: ExtendedFileProps[]): AppThunk<Promise<void>
       }
       dispatch(setSongInfo(songInfo));
     }
-
-    dispatch(changeFiles(files));
   };
 }

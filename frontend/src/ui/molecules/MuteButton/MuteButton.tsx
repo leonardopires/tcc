@@ -1,5 +1,5 @@
 import {IconButton} from "@mui/material";
-import {Mic, MicOff} from "@mui/icons-material";
+import {Mic, MicOff, VolumeMute, VolumeOff, VolumeUp} from "@mui/icons-material";
 import React from "react";
 
 export function MuteButton(props: { onClick: () => void, muted: boolean }) {
@@ -25,6 +25,6 @@ export function MuteButton(props: { onClick: () => void, muted: boolean }) {
     color={props.muted ? "error" : "success"}
     style={props.muted ? mutedStyle : unmutedStyle}
   >
-    {props.muted ? <MicOff/> : <Mic/>}
+    {props.muted ? <VolumeOff/> : <VolumeUp/>}
   </IconButton>;
 }

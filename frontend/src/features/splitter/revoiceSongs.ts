@@ -1,7 +1,8 @@
 import {AppThunk} from "../../app/store";
-import {RevoicerStatus, setSongFiles, setStatus} from "../revoicer/revoicerSlice";
+import {setSongFiles, setStatus} from "../revoicer/revoicerSlice";
 import {RevoicerService} from "../../services/RevoicerService";
 import {updateFile} from "./updateFile";
+import {RevoicerStatus} from "../revoicer/revoicerStatus";
 
 export function revoiceSongs(): AppThunk<Promise<void>> {
 

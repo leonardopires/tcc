@@ -1,7 +1,9 @@
 import {AppThunk} from "../../app/store";
-import {IRevoiceJob, RevoicerStatus, setSongFiles, setStatus} from "../revoicer/revoicerSlice";
+import {setSongFiles, setStatus} from "../revoicer/revoicerSlice";
 import {RevoicerService} from "../../services/RevoicerService";
 import {updateFile} from "./updateFile";
+import {IRevoiceJob} from "../revoicer/IRevoiceJob";
+import {RevoicerStatus} from "../revoicer/revoicerStatus";
 
 export function splitSongs(): AppThunk<Promise<void>> {
 

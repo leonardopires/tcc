@@ -1,9 +1,7 @@
 import {ExtendedFileProps} from "react-mui-fileuploader/dist/types/index.types";
-import {RevoicerStatus} from "../../features/revoicer/revoicerSlice";
 import React from "react";
 import {Box, Button, Grid, Typography} from "@mui/material";
 import {FileSelector} from "../molecules/FileSelector/FileSelector";
-import {ButtonsConfig} from "../../app/ButtonsConfig";
 import {LoadingButton} from "@mui/lab";
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {DeleteIcon} from "../atoms/DeleteIcon/DeleteIcon";
@@ -11,9 +9,10 @@ import {filesChanged} from "../../features/splitter/filesChanged";
 import {uploadAndSplit} from "../../features/revoicer/uploadAndSplit";
 
 import {Player, PlayerSize} from "./Player";
+import {RevoicerStatus} from "../../features/revoicer/revoicerStatus";
 
 
-export function SplitStep(props: {condition: boolean}) {
+export function UploadStep(props: {condition: boolean}) {
   const dispatch = useAppDispatch();
   const jobs = useAppSelector(state => state.revoicer.uploadedFiles);
   const status = useAppSelector(state => state.revoicer.status);
@@ -27,7 +26,7 @@ export function SplitStep(props: {condition: boolean}) {
 
   return props.condition ? (
     <Box>
-      <Typography variant={"h1"}>{jobs.length > 0 ? "Split" : "Upload"}</Typography>
+      <Typography variant={"h1"}>Upload & Split</Typography>
       <FileSelector
         id={"song"}
         onChange={(files) => dispatch(filesChanged(files))}
@@ -41,7 +40,8 @@ export function SplitStep(props: {condition: boolean}) {
             <Grid item xs={1}>
               <Button
                 variant={"outlined"}
-                onClick={() => dispatch(filesChanged([]))}
+                onClick={() => window.location.reload()}
+                disabled={status >= RevoicerStatus.Uploading}
               >
                 <DeleteIcon size={20}/>
               </Button>
@@ -50,7 +50,7 @@ export function SplitStep(props: {condition: boolean}) {
               <LoadingButton
                 variant={"contained"}
                 color={"primary"}
-                disabled={ButtonsConfig.uploadButtonDisabledWhen.includes(status)}
+                disabled={status >= RevoicerStatus.Uploading}
                 onClick={onUploadClick}
                 loading={status >= RevoicerStatus.Uploading && status <= RevoicerStatus.Splitting}
                 fullWidth

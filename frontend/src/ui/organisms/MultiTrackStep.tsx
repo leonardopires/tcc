@@ -1,13 +1,14 @@
 import {useAppDispatch, useAppSelector} from "../../app/hooks";
 import {revoiceSongs} from "../../features/splitter/revoiceSongs";
 import {Box, Button, Grid, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
-import {RevoicerStatus, setVoice} from "../../features/revoicer/revoicerSlice";
+import {setVoice} from "../../features/revoicer/revoicerSlice";
 import {AddCircleOutline} from "@mui/icons-material";
 import {Player, PlayerSize} from "./Player";
 import {ButtonsConfig} from "../../app/ButtonsConfig";
 import {LoadingButton} from "@mui/lab";
 import {TrackList} from "../molecules/TrackList";
 import React from "react";
+import {RevoicerStatus} from "../../features/revoicer/revoicerStatus";
 
 export function MultiTrackStep({condition}: { condition: boolean }) {
   const dispatch = useAppDispatch();
@@ -15,8 +16,8 @@ export function MultiTrackStep({condition}: { condition: boolean }) {
   const voice = useAppSelector(state => state.revoicer.voice);
   const status = useAppSelector(state => state.revoicer.status);
 
-  const splitFiles = files.filter(file => file.split?.length > 0);
-  const revoicedFiles = files.filter(file => file.revoiced?.length > 0);
+  const splitFiles = files.flatMap(file => file.split);
+  const revoicedFiles = files.flatMap(file => file.revoiced);
 
   const voices = useAppSelector(state => state.revoicer.voices);
 
@@ -31,7 +32,7 @@ export function MultiTrackStep({condition}: { condition: boolean }) {
           <Typography variant={"h3"} marginBottom={"1em"} marginTop={"0.3em"}>Revoice</Typography>
         </Grid>
         <Grid item xs={2} textAlign={"right"}>
-          <Button variant={"outlined"}>
+          <Button variant={"outlined"} onClick={() => window.location.reload()}>
             <AddCircleOutline/> <Box marginLeft={"5px"}>Novo</Box>
           </Button>
         </Grid>
@@ -47,34 +48,32 @@ export function MultiTrackStep({condition}: { condition: boolean }) {
         <>
           <Box>
             <TrackList
-              files={splitFiles}
-              type={"split"}
-            />
-            <TrackList
-              files={revoicedFiles}
-              type={"revoiced"}
+              files={[...revoicedFiles, ...splitFiles]}
+              voices={voices}
             />
           </Box>
-          <Box marginTop={"1em"}>
-            <Select
-              onChange={onChange}
-              value={voice}
-              disabled={ButtonsConfig.revoiceButtonDisabledWhen.includes(status)}
-              size={"small"}
-            >
-              {voices.map(voice => <MenuItem value={voice.id} key={voice.id}>{voice.name}</MenuItem>)}
-            </Select>
+          {status < RevoicerStatus.Revoiced ? (
+            <Box marginTop={"1em"} position={"absolute"} bottom={0} left={0}>
+              <Select
+                onChange={onChange}
+                value={voice}
+                disabled={ButtonsConfig.revoiceButtonDisabledWhen.includes(status)}
+                size={"small"}
+              >
+                {voices.map(voice => <MenuItem value={voice.id} key={voice.id}>{voice.name}</MenuItem>)}
+              </Select>
 
-            <LoadingButton
-              variant={"outlined"}
-              color={"primary"}
-              disabled={ButtonsConfig.revoiceButtonDisabledWhen.includes(status)}
-              onClick={handleClick}
+              <LoadingButton
+                variant={"outlined"}
+                color={"primary"}
+                disabled={ButtonsConfig.revoiceButtonDisabledWhen.includes(status)}
+                onClick={handleClick}
 
-              loading={status === RevoicerStatus.Revoicing}
-            >Revoice
-            </LoadingButton>
-          </Box>
+                loading={status === RevoicerStatus.Revoicing}
+              >{status >= RevoicerStatus.Revoicing ? RevoicerStatus[status] : "Revoice"}
+              </LoadingButton>
+            </Box>
+          ) : (<></>)}
         </>
       ) : (
         <></>

@@ -33,4 +33,4 @@ services:
     volumes:
       - ../:/app/backend/
       - ../data/svc:/data
-      - ../models:/models
+      - ../../models:/models

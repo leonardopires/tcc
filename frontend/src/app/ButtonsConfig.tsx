@@ -1,4 +1,4 @@
-import {RevoicerStatus} from "../features/revoicer/revoicerSlice";
+import {RevoicerStatus} from "../features/revoicer/revoicerStatus";
 
 export class ButtonsConfig {
   public static uploadButtonDisabledWhen = [
