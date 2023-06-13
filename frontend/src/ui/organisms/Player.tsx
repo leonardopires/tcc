@@ -10,6 +10,7 @@ import React, {CSSProperties, useState} from "react";
 import {PlayingTime} from "../atoms/PlayingTime/PlayingTime";
 import {PlayingProgress} from "../atoms/PlayingProgress/PlayingProgress";
 import {setPlayerTrack} from "../../features/player/playerSlice";
+import {RevoicerStatus} from "../../features/revoicer/revoicerStatus";
 
 const playerService = PlayerService.instance();
 
@@ -28,6 +29,7 @@ export function Player({id, muted = false, size = PlayerSize.XLarge, style}: {id
   const artwork = useAppSelector(state => state.revoicer.artwork);
 
   const state = useAppSelector(state => state.player.state);
+  const status = useAppSelector(state => state.revoicer.status);
 
   let job = jobs[0];
   let src = job?.filePath;
@@ -54,15 +56,20 @@ export function Player({id, muted = false, size = PlayerSize.XLarge, style}: {id
       let id = me.props.id;
 
       setDuration(player.duration);
-      dispatch(setPlayerTrack({id, src: player.src, volume: 1}));
 
-      player.ontimeupdate = () => {
-        if (Math.abs(time - player.currentTime) > 1) {
-          onTimeUpdate(player.currentTime);
-        }
-      };
+      let existingPlayer = playerService.getPlayer(id);
 
-      playerService.registerPlayer(id, player);
+      if (!existingPlayer || existingPlayer !== player || existingPlayer.src !== player.src) {
+        dispatch(setPlayerTrack({id, src: player.src, volume: 1}));
+
+        player.ontimeupdate = () => {
+          if (Math.abs(time - player.currentTime) > 1) {
+            onTimeUpdate(player.currentTime);
+          }
+        };
+
+        playerService.registerPlayer(id, player);
+      }
     }
   }
 
@@ -81,11 +88,12 @@ export function Player({id, muted = false, size = PlayerSize.XLarge, style}: {id
         height: size === PlayerSize.XLarge ? "12em" : "5em",
         backgroundImage: `url(${artwork})`,
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "center 30%",
       }}>
     </Paper>
     <PlayButton
       state={state}
+      disabled={status >= RevoicerStatus.Uploading && status < RevoicerStatus.Uploaded}
       onClick={() => dispatch(togglePlayingState())}
     />
     <Typography variant={"h4"}>{songInfo.title}</Typography>

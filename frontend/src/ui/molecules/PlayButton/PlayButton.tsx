@@ -1,14 +1,20 @@
 import React from "react";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import {PlayIcon} from "../../atoms/PlayIcon/PlayIcon";
 import {PlayerState} from "../../../features/player/playerSlice";
-import { PauseIcon } from "../../atoms/PauseIcon/PauseIcon";
+import {PauseIcon} from "../../atoms/PauseIcon/PauseIcon";
+import {HourglassBottom, PlayDisabled} from "@mui/icons-material";
 
-export function PlayButton({state, onClick}: { state: PlayerState, onClick: () => void }): React.ReactElement {
+export function PlayButton({state, onClick, disabled}: {
+  state: PlayerState,
+  onClick: () => void,
+  disabled?: boolean
+}): React.ReactElement {
   return (
     <Button
-      variant="contained"
+      variant={"contained"}
       onClick={onClick}
+      disabled={disabled}
       style={{
         marginTop: "-2em",
         borderRadius: "100%",
@@ -18,7 +24,13 @@ export function PlayButton({state, onClick}: { state: PlayerState, onClick: () =
         alignItems: "center",
       }}
     >
-      {state === PlayerState.Playing ? <PauseIcon/> : <PlayIcon />}
+      {disabled ? (
+        <CircularProgress variant={"indeterminate"} value={100} />
+      ) : (
+        state === PlayerState.Playing
+        ? <PauseIcon/>
+        : <PlayIcon />
+        )}
     </Button>
   );
 }

@@ -11,7 +11,7 @@ export function togglePlayingState(): AppThunk<Promise<void>> {
     let playerState = state.player.state;
 
     if (playerState === PlayerState.Playing) {
-      playerService.pauseAll();
+      await playerService.pauseAll();
       dispatch(setPlayerState(PlayerState.Paused));
     } else {
       await playerService.playAll();

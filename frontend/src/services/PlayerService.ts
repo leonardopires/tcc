@@ -25,11 +25,35 @@ export class PlayerService {
   }
 
   public async playAll(): Promise<void> {
-    await this.performInAllPlayersAsync((player) => player.play());
+    await this.performInAllPlayersAsync(async (player) => {
+      if (player.paused) {
+        return player.play();
+      }
+    });
   }
 
-  public pauseAll(): void {
-    this.performInAllPlayers((player) => player.pause());
+  public async pauseAll(): Promise<void> {
+    await this.performInAllPlayersAsync(async (player) => {
+      let oldOnPause = player.onpause;
+
+      if (!player.paused) {
+        return new Promise((resolve, reject) => {
+          try {
+            player.onpause = (ev) => {
+              player.onpause = oldOnPause;
+              if (typeof oldOnPause === "function") {
+                // @ts-ignore
+                oldOnPause(ev);
+              }
+              resolve();
+            };
+            player.pause();
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+    });
   }
 
   public setTime(updatedTime: number) {
@@ -46,16 +70,30 @@ export class PlayerService {
   public performInAllPlayers(action: (element: HTMLAudioElement) => void) {
     let promises = [];
     for (let player of this.getAllPlayers()) {
-      action(player);
+      try {
+        action(player);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
   public async performInAllPlayersAsync(action: (element: HTMLAudioElement) => Promise<void>) {
     let promises = [];
     for (let player of this.getAllPlayers()) {
-      promises.push(action(player));
+      promises.push(this.wrapAction(action, player)());
     }
     await Promise.all(promises);
+  }
+
+  private wrapAction(action: (element: HTMLAudioElement) => Promise<void>, player: HTMLAudioElement) {
+    return async () => {
+      try {
+        return await action(player);
+      } catch (e) {
+        console.error(e);
+      }
+    };
   }
 
   getPlayingTime() {

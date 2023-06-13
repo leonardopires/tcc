@@ -74,6 +74,11 @@ export function revoicerTheme(): RevoicerTheme {
           }
         }
       },
+      MuiLinearProgress: {
+        styleOverrides: {
+          indeterminate: yellow
+        }
+      }
     },
     typography: {
       allVariants: {

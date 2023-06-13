@@ -2,12 +2,12 @@ export interface IRevoiceJob {
   contentType?: string;
   jobId?: string;
   operationId?: string;
-  voice: string;
+  voice?: string;
   name: string;
   filePath: string;
   size: number;
   type: string;
-  extension: string | undefined;
+  extension?: string;
   lastModified?: string | Date;
   lastModifiedDate?: string | Date;
   input: string[];

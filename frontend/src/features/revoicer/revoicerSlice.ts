@@ -5,25 +5,33 @@ import {IRevoicerState} from "./IRevoicerState";
 
 
 const initialState: IRevoicerState = {
-  voice: "LiamGallagher",
+  voice: undefined,
   status: RevoicerStatus.Empty,
   uploadedFiles: [],
   voices: [
-    {id: "BillieJoe", name: "Billie Joe"},
-    {id: "ChrisCornell", name: "Chris Cornell"},
-    {id: "DavidBowie", name: "David Bowie"},
-    {id: "EddieVedder", name: "Eddie Vedder"},
-    {id: "EricCartman", name: "Eric Cartman"},
-    {id: "JamesHetfield", name: "James Hetfield"},
-    {id: "LadyGaga", name: "Lady Gaga"},
-    {id: "LiamGallagher", name: "Liam Gallagher"},
-    {id: "MarinaSena", name: "Marina Sena"},
-    {id: "NoelGallagher", name: "Noel Gallagher"},
-    {id: "ParapperTheRapper", name: "Parapper The Rapper"},
-    {id: "PhilAnselmo", name: "Phil Anselmo"},
-    {id: "StevieRayVaughan", name: "Stevie Ray Vaughan"},
-    {id: "TimMaia", name: "Tim Maia"},
-  ],
+    {id: "marcoc2/BillieJoe/Dookie", name: "Billie Joe (Green Day)"},
+    {id: "marcoc2/ChrisCornell", name: "Chris Cornell (Soundgarden, Audioslave)"},
+    {id: "marcoc2/DaveMustaine", name: "Dave Mustaine (Megadeth)"},
+    {id: "marcoc2/DavidBowie", name: "David Bowie"},
+    {id: "marcoc2/EddieVedder", name: "Eddie Vedder (Pearl Jam)"},
+    {id: "marcoc2/EricCartman", name: "Eric Cartman (South Park)"},
+    {id: "quickwick/FreddieMercury", name: "Freddie Mercury (Queen)"},
+    {id: "marcoc2/JamesHetfield", name: "James Hetfield (Metallica)"},
+    {id: "quickwick/JohnLennon", name: "John Lennon (The Beatles)"},
+    {id: "quickwick/KatyPerry", name: "Katy Perry"},
+    {id: "marcoc2/LadyGaga", name: "Lady Gaga"},
+    {id: "marcoc2/LiamGallagher", name: "Liam Gallagher (Oasis)"},
+    {id: "quickwick/MarkHoppus", name: "Mark Hoppus (Blink-182)"},
+    {id: "marcoc2/NoelGallagher", name: "Noel Gallagher (Oasis)"},
+    {id: "quickwick/PaulMcCartney", name: "Paul McCartney (The Beatles)"},
+    {id: "marcoc2/PhilAnselmo", name: "Phil Anselmo (Pantera)"},
+    {id: "quickwick/Shakira", name: "Shakira"},
+    {id: "quickwick/MichaelJackson", name: "Michael Jackson"},
+    {id: "quickwick/HayleyWilliams", name: "Hayley Williams (Paramore)"},
+    {id: "marcoc2/StevieRayVaughan", name: "Stevie Ray Vaughan"},
+    {id: "quickwick/TaylorSwift", name: "Taylor Swift"},
+    {id: "marcoc2/TimMaia", name: "Tim Maia"},
+  ].sort((item1, item2) => item1.name === item2.name ? 0 : (item1.name < item2.name ? -1 : 1)),
 };
 
 export const revoicerSlice = createSlice({
@@ -33,7 +41,7 @@ export const revoicerSlice = createSlice({
     setSongFiles: (state, action: PayloadAction<IRevoiceJob[]>) => {
       state.uploadedFiles = action.payload ?? [];
     },
-    setVoice: (state, action: PayloadAction<string>) => {
+    setVoice: (state, action: PayloadAction<string|undefined>) => {
       state.voice = action.payload;
       for (let file of state.uploadedFiles) {
         file.voice = action.payload;

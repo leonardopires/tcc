@@ -12,6 +12,7 @@ export interface ITrackState {
 }
 
 export interface IPlayerState {
+  volume: number;
   state: PlayerState;
   duration: number;
   tracks: ITrackState[];
@@ -19,6 +20,7 @@ export interface IPlayerState {
 
 const initialState: IPlayerState = {
   state: PlayerState.Paused,
+  volume: 1,
   duration: 0,
   tracks: [],
 };

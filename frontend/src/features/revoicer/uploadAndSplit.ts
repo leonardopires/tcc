@@ -15,11 +15,6 @@ export function uploadAndSplit(): AppThunk<Promise<void>> {
     await dispatch(uploadFiles());
     await dispatch(setPlayingState(previousState));
     await dispatch(splitSongs());
-    playerService.mutePlayer("originalAudioPlayer", true);
-    await dispatch(setPlayingState(PlayerState.Paused));
-
-    previousState = getState().player.state;
-    await dispatch(setPlayingState(previousState));
   };
 }
 

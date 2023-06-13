@@ -4,7 +4,7 @@ import {IID3Tag} from "id3-parser/lib/interface";
 import {IVoice} from "./IVoice";
 
 export interface IRevoicerState {
-  voice: string,
+  voice?: string,
   status: RevoicerStatus,
   uploadedFiles: IRevoiceJob[];
   songInfo?: IID3Tag,

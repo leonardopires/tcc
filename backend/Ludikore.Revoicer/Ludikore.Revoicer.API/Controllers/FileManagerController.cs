@@ -1,7 +1,9 @@
-﻿using Ludikore.Revoicer.Model;
+﻿using System.Net.Mime;
+using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Ludikore.Revoicer.API.Controllers
 {
@@ -57,12 +59,11 @@ namespace Ludikore.Revoicer.API.Controllers
                 Console.WriteLine("Getting file from S3");
                 await using var stream = await fileRepository.GetFile(file) as MemoryStream;
                 Console.WriteLine("Creating response");
-                return new FileContentResult(stream.ToArray(), "audio/wav");
+                return new FileContentResult(stream.ToArray(), "application/octet-stream");
             }
             finally
             {
                 Console.WriteLine("Response sent");
-                // fileRepository.DeleteFile(file);
             }
         }
 
@@ -70,9 +71,23 @@ namespace Ludikore.Revoicer.API.Controllers
         public async Task<RedirectResult> RedirectToFile([FromQuery] string filePath)
         {
             var directoryPath = Path.GetDirectoryName(filePath);
+
+            if (directoryPath == null)
+            {
+                throw new IOException($"Could not obtain a directory from path: {filePath}");
+            }
+
             var fileName = Path.GetFileName(filePath);
 
-            var file = new FileDescriptor(fileName, "audio/wav", directoryPath);
+            var provider = new FileExtensionContentTypeProvider();
+
+
+            if (!provider.TryGetContentType(fileName, out var contentType))
+            {
+                contentType = "audio/mpeg";
+            }
+
+            var file = new FileDescriptor(fileName, contentType, directoryPath);
             var fileRepository = new FileRepository();
             try
             {
@@ -84,7 +99,6 @@ namespace Ludikore.Revoicer.API.Controllers
             finally
             {
                 Console.WriteLine("Response sent");
-                // fileRepository.DeleteFile(file);
             }
         }
     }

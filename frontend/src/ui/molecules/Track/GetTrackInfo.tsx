@@ -16,7 +16,7 @@ const instruments = new Map<string, Partial<ITrack>>([
 export function getTrackInfo(filePath: string, voices: IVoice[]): ITrack {
   let fileName = FileService.formatName(filePath);
   let id = fileName.replace(/\.mp3$/, "");
-  let voice: Partial<ITrack> = voices.find(voice => voice.id === id) as Partial<ITrack>;
+  let voice: Partial<ITrack> = voices.find(voice => voice.id.endsWith(`/${id}`)) as Partial<ITrack>;
   if (voice) {
    voice = {
      ...voice,
@@ -26,8 +26,9 @@ export function getTrackInfo(filePath: string, voices: IVoice[]): ITrack {
    }
   }
 
+  let retrievedVoice = voice ?? instruments.get(id) ?? {id, name: id};
   let result: ITrack = {
-    ...(voice ?? instruments.get(id) ?? {id, name: id}),
+    ...retrievedVoice,
     filePath,
     fileName,
   } as ITrack;

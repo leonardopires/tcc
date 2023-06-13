@@ -1,3 +1,4 @@
+using Ludikore.Revoicer.API.BackgroundServices;
 using Ludikore.Revoicer.API.Hubs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,6 +19,9 @@ builder.Services.AddEndpointsApiExplorer()
     {
         options.EnableDetailedErrors = true;
     });
+
+builder.Services.AddHostedService<RevoicerListenerService>();
+builder.Services.AddHostedService<SplitterListenerService>();
 
 
 var app = builder.Build();

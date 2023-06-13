@@ -77,7 +77,7 @@ class WorkerBase(metaclass=ABCMeta):
         response = self.sqs.send_message(
             QueueUrl=url,
             MessageBody=body,
-            MessageDeduplicationId=str(payload["OperationId"]),
+            MessageDeduplicationId=str(payload["OperationId"] + "_" + payload["Voice"]),
             MessageGroupId=str(payload["JobId"]),
         )
         print("Message sent:", body)

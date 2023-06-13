@@ -1,24 +1,58 @@
-import {FileService} from "../../../services/FileService";
-import React, {CSSProperties, useState} from "react";
+import React, {CSSProperties, ReactEventHandler, SyntheticEvent, useState} from "react";
 import ReactAudioPlayer from "react-audio-player";
-import {Box, Grid, IconButton, Paper, Typography} from "@mui/material";
+import {Box, Grid, IconButton, Paper, Slider, Typography} from "@mui/material";
 import {TrackStatus} from "../../atoms/TrackStatus/TrackStatus";
 import {AppConfig} from "../../../AppConfig";
-import {Download, Share} from "@mui/icons-material";
+import {Download} from "@mui/icons-material";
 import {PlayerService} from "../../../services/PlayerService";
-import {useAppSelector} from "../../../app/hooks";
+import {useAppDispatch, useAppSelector} from "../../../app/hooks";
 import {MuteButton} from "../MuteButton/MuteButton";
-import {getTrackInfo} from "./GetTrackInfo";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ITrack} from "../../../features/revoicer/ITrack";
+import {setTrackVolume} from "../../../features/player/setTrackVolume";
+import {PlayerState, setPlayerTrack, setPlayerTrackVolume} from "../../../features/player/playerSlice";
+import {setPlayingState} from "../../../features/player/setPlayingState";
 
 const playerService = PlayerService.instance();
+
+function TrackVolumeSlider(props: {
+  track: ITrack,
+}) {
+  let [volume, setVolume] = useState(0.7);
+
+  function onChange(e: Event, volume: number | number[]) {
+    let value = ((volume as number) ?? 100) / 100;
+
+    let player = playerService.getPlayer(props.track.id);
+    if (player) {
+      player.volume = value;
+    }
+    setVolume(value);
+  }
+
+  return (
+    <Slider
+      value={volume * 100}
+      onChange={onChange}
+      max={100}
+      step={1}
+      size={"small"}
+      style={{
+        color: "#58470a"
+      }}
+    >
+    </Slider>
+  );
+}
 
 export function Track({track}: { track: ITrack }) {
   let id = track.id;
   let [muted, setMuted] = useState(playerService.getPlayer(id)?.muted);
 
   let voices = useAppSelector(state => state.revoicer.voices);
+  let songInfo = useAppSelector(state => state.revoicer.songInfo);
+
+  let trackState = useAppSelector(state => state.player.tracks?.find(track => track.id === id));
 
   let itemStyle: CSSProperties = {};
 
@@ -26,12 +60,15 @@ export function Track({track}: { track: ITrack }) {
     paddingTop: "12px",
   };
 
+  let dispatch = useAppDispatch();
 
   function registerPlayer(me?: ReactAudioPlayer | null) {
     if (me?.props?.id && me?.audioEl?.current) {
       let player = me.audioEl.current;
       let id = me.props.id;
+      player.volume = 0.7;
 
+      dispatch(setPlayerTrack({id, src: player.src, volume: player.volume}));
       playerService.registerPlayer(id, player);
     }
   }
@@ -52,10 +89,16 @@ export function Track({track}: { track: ITrack }) {
           <TrackStatus status={!muted}/>
         </Grid>
         <Grid item xs={1} style={{...itemStyle, ...nonButtonItemStyle}}>
-          <FontAwesomeIcon icon={track.icon} />
+          <FontAwesomeIcon icon={track.icon}/>
         </Grid>
-        <Grid item xs={13} style={{...itemStyle, ...nonButtonItemStyle}}>
-          <Typography variant={"h6"}>{track.name}</Typography>
+        <Grid item xs={10} sm={12} md={14} style={{...itemStyle, ...nonButtonItemStyle}}>
+          <Typography
+            variant={"h6"}
+            overflow={"clip"}
+            textOverflow={"ellipsis"}
+            width={"100%"}
+            position={"relative"}
+          >{track.name === "Original" && songInfo?.artist ? `Original: ${songInfo.artist}` : track.name}</Typography>
 
           <ReactAudioPlayer
             id={track.id}
@@ -63,20 +106,35 @@ export function Track({track}: { track: ITrack }) {
             controls={false}
             muted={muted}
             ref={registerPlayer}
+            onEnded={() => {
+              dispatch(setPlayingState(PlayerState.Paused));
+              playerService.setTime(0);
+            }}
           />
         </Grid>
-        <Grid item xs={3} style={itemStyle}>
-          <IconButton style={{visibility: "hidden"}}>
-            <Share/>
-          </IconButton>
-          <IconButton  style={{visibility: "hidden"}}>
+        <Grid item xs={3} sm={2} style={{...itemStyle, paddingTop: "5px"}}>
+          <TrackVolumeSlider
+            track={track}
+          />
+        </Grid>
+        <Grid item
+              xs={2}
+              sm={2}
+              md={1}
+              style={{...itemStyle, paddingLeft: "10px"}}
+        >
+          <IconButton
+            href={`${AppConfig.api.baseURL}FileManager/redirect?filePath=%2F${encodeURIComponent(track.filePath)}`}
+            target={"_blank"}>
             <Download/>
           </IconButton>
         </Grid>
-        <Grid item xs={1} style={itemStyle}>
-          <Box>
-            <MuteButton onClick={() => setMuted(!muted)} muted={!!muted}/>
-          </Box>
+        <Grid item
+              xs={1}
+              style={itemStyle}
+              textAlign={"end"}
+        >
+          <MuteButton onClick={() => setMuted(!muted)} muted={!!muted}/>
         </Grid>
       </Grid>
     </Paper>
