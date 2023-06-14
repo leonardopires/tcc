@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ludikore.Revoicer.API", "backend\Ludikore.Revoicer.API\Ludikore.Revoicer.API.csproj", "{AEC2317B-056B-4B70-A180-8BC5D81008DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ludikore.Revoicer.Test", "backend\Ludikore.Revoicer.Test\Ludikore.Revoicer.Test.csproj", "{2E29F98F-9197-4F2D-88E3-29C651B5F550}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ludikore.Revoicer.Model", "backend\Ludikore.Revoicer.Model\Ludikore.Revoicer.Model.csproj", "{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ludikore.Revoicer.Services", "backend\Ludikore.Revoicer.Services\Ludikore.Revoicer.Services.csproj", "{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{46EC09E6-13EE-459A-9424-ED4039DAA610}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "demucs", "workers\demucs\demucs.pyproj", "{8E5AE361-9F02-40D6-95C0-1E4F0D9B9CF7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AEC2317B-056B-4B70-A180-8BC5D81008DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC2317B-056B-4B70-A180-8BC5D81008DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC2317B-056B-4B70-A180-8BC5D81008DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC2317B-056B-4B70-A180-8BC5D81008DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E29F98F-9197-4F2D-88E3-29C651B5F550}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4B5A80-11BD-41B0-9BEA-6D4CD831E363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{721F8ED1-C0FF-446E-98E6-7E2A424ECAF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46EC09E6-13EE-459A-9424-ED4039DAA610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46EC09E6-13EE-459A-9424-ED4039DAA610}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46EC09E6-13EE-459A-9424-ED4039DAA610}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46EC09E6-13EE-459A-9424-ED4039DAA610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E5AE361-9F02-40D6-95C0-1E4F0D9B9CF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E5AE361-9F02-40D6-95C0-1E4F0D9B9CF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {43764A1F-AE1C-4659-A46A-1502638D38C1}
+	EndGlobalSection
+EndGlobal

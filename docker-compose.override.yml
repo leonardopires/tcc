@@ -1,0 +1,75 @@
+version: '3.4'
+
+services:
+  
+  demucs:
+    environment:
+      - AZURE_SB_ACCESS_KEY_NAME=Revoicer
+      - AZURE_SB_ACCESS_KEY_VALUE=Q39eKIIGssZFxwtHwy0fnt34SAhM5yzJd+ASbO2XqBo=
+      - AZURE_SB_ENDPOINT=sb://revoicer.servicebus.windows.net/
+      - AZURE_ACCOUNT_NAME=revoicer
+      - AZURE_STORAGE_ACCESS_KEY=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==
+      - AZURE_STORAGE_CONTAINER_NAME=revoicer
+      - INPUT_QUEUE_NAME=revoicer-demucs-input.fifo
+      - OUTPUT_QUEUE_NAME=revoicer-demucs-output.fifo
+      - DEMUCS_MODEL=htdemucs_6s
+      - DEMUCS_SHIFTS=2
+
+    deploy:
+      resources:
+        limits:
+          cpus: '6'
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    
+
+  svc:
+    environment:
+      - AZURE_SB_ACCESS_KEY_NAME=Revoicer
+      - AZURE_SB_ACCESS_KEY_VALUE=Q39eKIIGssZFxwtHwy0fnt34SAhM5yzJd+ASbO2XqBo=
+      - AZURE_SB_ENDPOINT=sb://revoicer.servicebus.windows.net/
+      - AZURE_ACCOUNT_NAME=revoicer
+      - AZURE_STORAGE_ACCESS_KEY=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==
+      - AZURE_STORAGE_CONTAINER_NAME=revoicer
+      - INPUT_QUEUE_NAME=revoicer-svc-input.fifo
+      - OUTPUT_QUEUE_NAME=revoicer-svc-output.fifo
+
+    deploy:
+      resources:
+        limits:
+          cpus: '6'
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    
+  
+  ludikore.revoicer.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - AZURE_SB_ACCESS_KEY_NAME=Revoicer
+      - AZURE_SB_ACCESS_KEY_VALUE=Q39eKIIGssZFxwtHwy0fnt34SAhM5yzJd+ASbO2XqBo=
+      - AZURE_SB_ENDPOINT=sb://revoicer.servicebus.windows.net/
+      - AZURE_ACCOUNT_NAME=revoicer
+      - AZURE_STORAGE_ACCESS_KEY=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==
+      - AZURE_STORAGE_CONTAINER_NAME=revoicer
+      - AWS_ENDPOINT=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=AKIA2WKJWLHNGDV7FA6A
+      - AWS_SECRET_ACCESS_KEY=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
+
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./data:/data
+
+  revoicer-web:
+    environment:
+      - REVOICER_API_URL=https://localhost:8443/api
