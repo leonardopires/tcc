@@ -1,4 +1,4 @@
-name: Build and deploy .NET Core application to Web App revoicer with API Management Service revoicer-api-revoicer-api
+name: Build .NET
 on:
   push:
     branches:
