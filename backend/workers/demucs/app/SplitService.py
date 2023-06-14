@@ -10,12 +10,17 @@ from backend.workers.common.services.RevoicerBaseService import RevoicerBaseServ
 TJob = RevoicerJob
 TWorkItem = FileInfo | str
 
+INPUT_QUEUE_NAME = os.environ["INPUT_QUEUE_NAME"]
+OUTPUT_QUEUE_NAME = os.environ["OUTPUT_QUEUE_NAME"]
+DEMUCS_MODEL = os.environ["DEMUCS_MODEL"]
+DEMUCS_SHIFTS = os.environ["DEMUCS_SHIFTS"]
+
 
 class SplitService(RevoicerBaseService):
     def __init__(self):
-        super().__init__(RevoicerJob, "revoicer-demucs-input.fifo", "revoicer-demucs-output.fifo")
-        self.model = "htdemucs_6s"
-        self.shifts = 2
+        super().__init__(RevoicerJob, INPUT_QUEUE_NAME, OUTPUT_QUEUE_NAME)
+        self.model = DEMUCS_MODEL
+        self.shifts = DEMUCS_SHIFTS
 
     def get_output_work_items(self, job: TJob) -> List[TWorkItem]:
         return job.Split
@@ -45,7 +50,7 @@ class SplitService(RevoicerBaseService):
         return_code = await process.wait()
 
         if return_code != 0:
-            raise RevoicerException(f"Ocorreu um erro. Código: {return_code}")
+            raise RevoicerException(f"Ocorreu um erro executando o DEMUCS. Código: {return_code}")
 
         output_dir = f"/data/separated/{self.model}/{job.OperationId}"
 

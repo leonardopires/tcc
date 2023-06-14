@@ -1,17 +1,25 @@
-﻿using System.Net.Mime;
-using Ludikore.Revoicer.Model;
+﻿using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services;
 using Ludikore.Revoicer.Services.IO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace Ludikore.Revoicer.API.Controllers
 {
+    /// <summary>
+    /// This controller allows the client to upload and download files from our cloud storage.
+    /// Implements the <see cref="ControllerBase" />
+    /// </summary>
+    /// <seealso cref="ControllerBase" />
     [Route("api/[controller]")]
     [ApiController]
     public class FileManagerController : ControllerBase
     {
+        /// <summary>
+        /// Allows the user to upload files into our cloud storage.
+        /// </summary>
+        /// <param name="files">The files.</param>
+        /// <returns>IList&lt;RevoicerJob&gt;.</returns>
         [HttpPost("upload")]
         public async Task<IList<RevoicerJob>> UploadFiles(IList<IFormFile> files)
         {
@@ -29,6 +37,7 @@ namespace Ludikore.Revoicer.API.Controllers
                 var filePath = fileDescriptor.FilePath.StartsWith("/")
                     ? fileDescriptor.FilePath.Substring(1)
                     : fileDescriptor.FilePath;
+                
                 var jobInput = new RevoicerJob()
                 {
                     ContentType = fileDescriptor.ContentType,
@@ -47,6 +56,12 @@ namespace Ludikore.Revoicer.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Retrieves a file from the cloud storage and sends it as a download.
+        /// </summary>
+        /// <remarks>This is a fallback method and should be used carefully (since it's slower and consumes more bandwidth from the servers).</remarks>
+        /// <param name="filePath">The file path.</param>
+        /// <returns>FileContentResult.</returns>
         [HttpGet("download")]
         public async Task<FileContentResult> DownloadFile([FromQuery] string filePath)
         {
@@ -60,7 +75,10 @@ namespace Ludikore.Revoicer.API.Controllers
                 Console.WriteLine("Getting file from cloud storage");
                 await using var stream = await fileRepository.GetFile(file) as MemoryStream;
                 Console.WriteLine("Creating response");
-                return new FileContentResult(stream.ToArray(), "application/octet-stream");
+                return new FileContentResult(stream.ToArray(), "application/octet-stream")
+                {
+                    FileDownloadName = file.Name,
+                };
             }
             finally
             {
@@ -68,6 +86,15 @@ namespace Ludikore.Revoicer.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Retrieves a publicly visible URL to a file at the cloud storage provider and redirects to it.
+        /// </summary>
+        /// <remarks>
+        /// It is preferable to use this rather than the <see cref="DownloadFile"/> action.
+        /// </remarks>
+        /// <param name="filePath">The file path.</param>
+        /// <returns>RedirectResult.</returns>
+        /// <exception cref="System.IO.IOException">Could not obtain a directory from path: {filePath}</exception>
         [HttpGet("redirect")]
         public async Task<RedirectResult> RedirectToFile([FromQuery] string filePath)
         {

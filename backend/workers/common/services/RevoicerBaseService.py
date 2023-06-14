@@ -28,7 +28,7 @@ class RevoicerBaseService(QueueBasedService[TJob, TWorkItem], metaclass=ABCMeta)
     def preprocess_output_work_item(self, job: TJob, file: Any) -> TWorkItem:
         file_name = os.path.basename(file)
         # noinspection PyArgumentList
-        result = FileInfo(f"data/output/{job.OperationId}/{file_name}", file)
+        result = FileInfo(f"data/{job.OperationId}/output/{file_name}", file)
         return result
 
     async def postprocess_output_work_items(self, job: TJob, output_items: List[TWorkItem]) -> List[TWorkItem]:

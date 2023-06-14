@@ -8,31 +8,56 @@ using Ludikore.Revoicer.Services.Azure;
 
 namespace Ludikore.Revoicer.Services.Cloud
 {
+    /// <summary>
+    /// This class returns preconfigured instances of the cloud services for the cloud provider specified on its initialization
+    /// </summary>
     public class CloudProviderFactory
     {
+
+
+        /// <summary>
+        /// Gets the cloud provider being used.
+        /// </summary>
+        /// <value>The cloud provider.</value>
         public CloudProvider Provider { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CloudProviderFactory"/> class.
+        /// </summary>
+        /// <param name="provider">The provider.</param>
         public CloudProviderFactory(CloudProvider provider)
         {
             Provider = provider;
         }
 
+        /// <summary>
+        /// Creates or retrieves an instance of the service that provides access to message queues
+        /// </summary>
+        /// <returns>CloudQueueService.</returns>
+        /// <exception cref="Ludikore.Revoicer.Services.Cloud.RevoicerConfigurationException">There is no entry for this cloud provider: {Provider}</exception>
         public CloudQueueService GetQueueService()
         {
             switch (Provider)
             {
                 case CloudProvider.AWS:
-                    return new SqsService("http://localstack:4566");
+                    return new SqsService(CloudSettings.AwsEndpoint);
                 case CloudProvider.Azure:
-                    return new ServiceBusService("Endpoint=sb://revoicer.servicebus.windows.net/;" +
-                                                "SharedAccessKeyName=RootManageSharedAccessKey;" +
-                                                "SharedAccessKey=r62Vegf/HS2iKV6MJHaDprhNC6KSe/7jH+ASbAH7Sbc=;" +
-                                                "AccountName=revoicer");
+                    var queueConnectionString = $"Endpoint={CloudSettings.AzureServiceBusEndpoint};" +
+                                                $"SharedAccessKeyName={CloudSettings.AzureServiceBusAccessKeyName};" +
+                                                $"SharedAccessKey={CloudSettings.AzureServiceBusAccessKeyValue};" +
+                                                $"AccountName={CloudSettings.AzureAccountName}";
+
+                    return new ServiceBusService(queueConnectionString);
                 default:
-                    throw new ArgumentOutOfRangeException($"There is no entry for this cloud provider: {Provider}");
+                    throw new RevoicerConfigurationException($"There is no entry for this cloud provider: {Provider}");
             }
         }
 
+        /// <summary>
+        /// Creates or retrieves an instance of the service that provides access to the cloud storage
+        /// </summary>
+        /// <returns>CloudStorageService.</returns>
+        /// <exception cref="Ludikore.Revoicer.Services.Cloud.RevoicerConfigurationException">There is no entry for this cloud provider: {Provider}</exception>
         public CloudStorageService GetStorageService()
         {
             switch (Provider)
@@ -40,15 +65,17 @@ namespace Ludikore.Revoicer.Services.Cloud
                 case CloudProvider.AWS:
                     return new S3Service("http://localstack:4566");
                 case CloudProvider.Azure:
+
+                    var storageConnectionString = "DefaultEndpointsProtocol=https;" +
+                                                  $"AccountName={CloudSettings.AzureAccountName};" +
+                                                  $"AccountKey={CloudSettings.AzureStorageAccessKey};" +
+                                                  "EndpointSuffix=core.windows.net";
+
                     return new BlobStorageService(
-                        connectionString: "DefaultEndpointsProtocol=https;" +
-                                          "AccountName=revoicer;" +
-                                          "AccountKey=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==;" +
-                                          "EndpointSuffix=core.windows.net",
-                        sasAccountKey:
-                        "0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==");
+                        connectionString: storageConnectionString,
+                        sasAccountKey: CloudSettings.AzureStorageAccessKey);
                 default:
-                    throw new ArgumentOutOfRangeException($"There is no entry for this cloud provider: {Provider}");
+                    throw new RevoicerConfigurationException($"There is no entry for this cloud provider: {Provider}");
             }
         }
     }

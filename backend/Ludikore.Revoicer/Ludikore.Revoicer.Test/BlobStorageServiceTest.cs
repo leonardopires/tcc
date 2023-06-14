@@ -8,6 +8,9 @@ using Ludikore.Revoicer.Services.Cloud;
 
 namespace Ludikore.Revoicer.Test
 {
+    /// <summary>
+    /// Tests the <see cref="BlobStorageService"/> class.
+    /// </summary>
     public class BlobStorageServiceTest
     {
         [Fact]

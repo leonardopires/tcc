@@ -3,7 +3,7 @@
 namespace Ludikore.Revoicer.Services.Cloud;
 
 /// <summary>
-/// This class provides an abstraction layer for a cloud storage service such as AWS S3 or Azure BlobStorage.
+/// This class provides an abstraction layer for a cloud storage service such as AWS S3Client or Azure BlobStorage.
 /// </summary>
 public abstract class CloudStorageService
 {
@@ -15,7 +15,7 @@ public abstract class CloudStorageService
     public abstract Task EnsureContainerExists(string name);
 
     /// <summary>
-    /// Puts the file.
+    /// Saves the file into the cloud storage.
     /// </summary>
     /// <param name="containerName">Name of the container.</param>
     /// <param name="fileDescriptor">The file descriptor.</param>
@@ -23,7 +23,7 @@ public abstract class CloudStorageService
     public abstract Task PutFile(string containerName, IFileDescriptor fileDescriptor);
 
     /// <summary>
-    /// Gets the file.
+    /// Downloads the file from the cloud storage.
     /// </summary>
     /// <param name="containerName">Name of the container.</param>
     /// <param name="fileDescriptor">The file descriptor.</param>

@@ -12,12 +12,34 @@ using Ludikore.Revoicer.Services.IO;
 
 namespace Ludikore.Revoicer.Services.Azure
 {
+    /// <summary>
+    /// This class implements a cloud storage service for the Azure Blob Storage.
+    /// Implements the <see cref="CloudStorageService" />
+    /// </summary>
+    /// <seealso cref="CloudStorageService" />
     internal class BlobStorageService : CloudStorageService
     {
+        /// <summary>
+        /// The sas account key
+        /// </summary>
         private readonly string _sasAccountKey;
+
+        /// <summary>
+        /// Gets the service client.
+        /// </summary>
+        /// <value>The service client.</value>
         public BlobServiceClient ServiceClient { get; }
+        /// <summary>
+        /// Gets the file name formatter.
+        /// </summary>
+        /// <value>The file name formatter.</value>
         private FileNameFormatter FileNameFormatter { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="sasAccountKey">The sas account key.</param>
         public BlobStorageService(string connectionString, string sasAccountKey)
         {
             _sasAccountKey = sasAccountKey;
@@ -25,12 +47,23 @@ namespace Ludikore.Revoicer.Services.Azure
             FileNameFormatter = new FileNameFormatter();
         }
 
+        /// <summary>
+        /// Ensures that the container or bucket exists in the storage.
+        /// </summary>
+        /// <param name="name">Name of the bucket or container.</param>
+        /// <returns>Task.</returns>
         public override async Task EnsureContainerExists(string name)
         {
             var blobContainerClient = ServiceClient.GetBlobContainerClient(name);
-            await blobContainerClient.CreateIfNotExistsAsync(PublicAccessType.None);
+            await blobContainerClient.CreateIfNotExistsAsync();
         }
 
+        /// <summary>
+        /// Saves the file into the cloud storage.
+        /// </summary>
+        /// <param name="containerName">Name of the container.</param>
+        /// <param name="fileDescriptor">The file descriptor.</param>
+        /// <returns>Task.</returns>
         public override async Task PutFile(string containerName, IFileDescriptor fileDescriptor)
         {
             var blobContainerClient = ServiceClient.GetBlobContainerClient(containerName);
@@ -40,6 +73,12 @@ namespace Ludikore.Revoicer.Services.Azure
             await blobClient.UploadAsync(fileStream, true);
         }
 
+        /// <summary>
+        /// Downloads the file from the cloud storage.
+        /// </summary>
+        /// <param name="containerName">Name of the container.</param>
+        /// <param name="fileDescriptor">The file descriptor.</param>
+        /// <returns>Task&lt;Stream&gt;.</returns>
         public override async Task<Stream> GetFile(string containerName, IFileDescriptor fileDescriptor)
         {
             var blobContainerClient = ServiceClient.GetBlobContainerClient(containerName);
@@ -51,10 +90,16 @@ namespace Ludikore.Revoicer.Services.Azure
             return memoryStream;
         }
 
+        /// <summary>
+        /// Gets a public URL for the specified file.
+        /// </summary>
+        /// <param name="containerName">Name of the container.</param>
+        /// <param name="file">The file.</param>
+        /// <returns>Task&lt;System.String&gt;.</returns>
         public override async Task<string> GetFileUrl(string containerName, IFileDescriptor file)
         {
             var blobContainerClient = ServiceClient.GetBlobContainerClient(containerName);
-            var fileFilePath = FileNameFormatter.RemoveRootFolderName(file.FilePath);
+            var fileFilePath = FileNameFormatter.RemoveRootFolderFromPath(file.FilePath);
             var blobClient = blobContainerClient.GetBlobClient(fileFilePath);
 
             var sasBuilder = new BlobSasBuilder(BlobContainerSasPermissions.Read, DateTimeOffset.UtcNow.AddDays(7))

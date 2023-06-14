@@ -10,16 +10,17 @@ from backend.workers.common.services.RevoicerBaseService import RevoicerBaseServ
 TJob = RevoicerJob
 TWorkItem = FileInfo | str
 
+INPUT_QUEUE_NAME = os.environ["INPUT_QUEUE_NAME"]
+OUTPUT_QUEUE_NAME = os.environ["OUTPUT_QUEUE_NAME"]
+
 
 class RevoicerService(RevoicerBaseService):
     def __init__(self):
-        super().__init__(RevoicerJob, "revoicer-svc-input.fifo", "revoicer-svc-output.fifo")
-        self.model = "htdemucs_6s"
-        self.shifts = 2
+        super().__init__(RevoicerJob, INPUT_QUEUE_NAME, OUTPUT_QUEUE_NAME)
 
     def get_input_work_items(self, job: TJob) -> List[TWorkItem]:
         return [self.preprocess_input_work_item(file) for file in job.Split
-                    if file.endswith("/vocals.wav")]
+                if file.endswith("/vocals.wav")]
 
     def set_output_work_items(self, job: TJob, output_items: List[TWorkItem]) -> TJob:
         job.Revoiced = [str(file.RemotePath) for file in output_items]

@@ -1,28 +1,30 @@
+import os
+
 from backend.workers.common.azure.BlobStorageService import BlobStorageService
 from backend.workers.common.azure.ServiceBusService import ServiceBusService
 from backend.workers.common.cloud.CloudProvider import CloudProvider
 from backend.workers.common.cloud.CloudQueueService import CloudQueueService
 from backend.workers.common.cloud.CloudStorageService import CloudStorageService
 
-QUEUE_CONNECTION_STRING = "Endpoint=sb://revoicer.servicebus.windows.net/;" \
-                          "SharedAccessKeyName=RootManageSharedAccessKey;" \
-                          "SharedAccessKey=r62Vegf/HS2iKV6MJHaDprhNC6KSe/7jH+ASbAH7Sbc=;" \
-                          "AccountName=revoicer"
+CONTAINER_NAME = os.environ["CONTAINER_NAME"]
+
+AZURE_SB_ENDPOINT = os.environ["AZURE_SB_ENDPOINT"]
+AZURE_SB_ACCESS_KEY_NAME = os.environ["AZURE_SB_ACCESS_KEY_NAME"]
+AZURE_SB_ACCESS_KEY_VALUE = os.environ["AZURE_SB_ACCESS_KEY_VALUE"]
+
+AZURE_ACCOUNT_NAME = os.environ["AZURE_ACCOUNT_NAME"]
+AZURE_STORAGE_ACCESS_KEY = os.environ["AZURE_STORAGE_ACCESS_KEY"]
+
+# Settings
+QUEUE_CONNECTION_STRING = f"Endpoint={AZURE_SB_ENDPOINT};" \
+                          f"SharedAccessKeyName={AZURE_SB_ACCESS_KEY_NAME};" \
+                          f"SharedAccessKey={AZURE_SB_ACCESS_KEY_NAME};" \
+                          f"AccountName={AZURE_ACCOUNT_NAME}"
 
 STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;" \
-                            "AccountName=revoicer;" \
-                            "AccountKey=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==;" \
+                            f"AccountName={AZURE_ACCOUNT_NAME};" \
+                            f"AccountKey={AZURE_STORAGE_ACCESS_KEY};" \
                             "EndpointSuffix=core.windows.net"
-
-DEMUCS_INPUT_QUEUE_NAME = 'revoicer-demucs-input.fifo'
-DEMUCS_OUTPUT_QUEUE_NAME = 'revoicer-demucs-output.fifo'
-
-SVC_INPUT_QUEUE_NAME = 'revoicer-demucs-input.fifo'
-SVC_OUTPUT_QUEUE_NAME = 'revoicer-demucs-output.fifo'
-
-CONTAINER_NAME = "revoicer"
-
-
 class CloudProviderFactory:
     def __init__(self, cloud_provider: CloudProvider):
         self.cloud_provider = cloud_provider

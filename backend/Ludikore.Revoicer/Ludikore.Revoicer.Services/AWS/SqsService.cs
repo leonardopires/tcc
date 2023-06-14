@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
@@ -14,21 +7,41 @@ using Newtonsoft.Json;
 
 namespace Ludikore.Revoicer.Services.AWS
 {
+    /// <summary>
+    /// This class implements a cloud queue service for Amazon SQS 
+    /// Implements the <see cref="CloudQueueService" />
+    /// </summary>
+    /// <seealso cref="CloudQueueService" />
     public class SqsService : CloudQueueService
     {
-        private readonly AmazonSQSClient sqs;
+        /// <summary>
+        /// Gets the SQS client.
+        /// </summary>
+        /// <value>The SQS client.</value>
+        protected AmazonSQSClient SqsClient { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqsService"/> class.
+        /// </summary>
+        /// <param name="serviceUrl">The service URL.</param>
         public SqsService(string serviceUrl) : base()
         {
-            sqs = new AmazonSQSClient(
+            SqsClient = new AmazonSQSClient(
                 new EnvironmentVariablesAWSCredentials(),
                 new AmazonSQSConfig { ServiceURL = serviceUrl }
             );
         }
 
+        /// <summary>
+        /// Sends the message into the specified cloud queue.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queueName">Name of the queue.</param>
+        /// <param name="message">The message.</param>
+        /// <returns>Task.</returns>
         public override async Task SendMessage<T>(string queueName, T message)
         {
-            var getQueueUrlResponse = await sqs.GetQueueUrlAsync(queueName);
+            var getQueueUrlResponse = await SqsClient.GetQueueUrlAsync(queueName);
 
             var request = new SendMessageRequest
             {
@@ -37,17 +50,25 @@ namespace Ludikore.Revoicer.Services.AWS
                 MessageGroupId = Guid.NewGuid().ToString(),
                 MessageDeduplicationId = Guid.NewGuid().ToString()
             };
-            await sqs.SendMessageAsync(request);
+            await SqsClient.SendMessageAsync(request);
         }
 
+        /// <summary>
+        /// Waits for a new message to arrive in the specified queue, but only if it matches the specified predicate condition.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="queueName">Name of the queue.</param>
+        /// <param name="predicate">A predicate function that evaluates whether or not the message should be retrieved.</param>
+        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>IAsyncEnumerable&lt;QueueMessage&lt;System.Nullable&lt;T&gt;&gt;&gt;.</returns>
         public override async IAsyncEnumerable<QueueMessage<T?>> WaitForMessage<T>(string queueName,
             Func<QueueMessage<T?>, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : default
         {
-            var getQueueUrlResponse = await sqs.GetQueueUrlAsync(queueName, cancellationToken);
+            var getQueueUrlResponse = await SqsClient.GetQueueUrlAsync(queueName, cancellationToken);
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                var response = await sqs.ReceiveMessageAsync(new ReceiveMessageRequest
+                var response = await SqsClient.ReceiveMessageAsync(new ReceiveMessageRequest
                 {
                     QueueUrl = getQueueUrlResponse.QueueUrl,
                     MaxNumberOfMessages = 1,
@@ -68,7 +89,7 @@ namespace Ludikore.Revoicer.Services.AWS
                     if (predicate(wrappedMessage))
                     {
                         yield return wrappedMessage;
-                        await sqs.DeleteMessageAsync(new DeleteMessageRequest
+                        await SqsClient.DeleteMessageAsync(new DeleteMessageRequest
                         {
                             QueueUrl = getQueueUrlResponse.QueueUrl,
                             ReceiptHandle = wrappedMessage.ReceiptHandle

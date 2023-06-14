@@ -1,6 +1,6 @@
 ﻿namespace Ludikore.Revoicer.Model
 {
-    public interface IRevoicerJob : IQueueJobData, IFileDescriptor
+    public interface IRevoicerJob : IWorkerJobData, IFileDescriptor
     {
         string OperationId { get; set; }
         string Voice { get; set; }

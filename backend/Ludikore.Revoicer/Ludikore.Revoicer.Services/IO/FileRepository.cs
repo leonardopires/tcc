@@ -16,10 +16,26 @@ namespace Ludikore.Revoicer.Services.IO
     /// </summary>
     public class FileRepository
     {
-        private readonly string _bucketName = "revoicer";
+        /// <summary>
+        /// Gets the name of the container.
+        /// </summary>
+        /// <value>The name of the container.</value>
+        public string ContainerName { get; } = CloudSettings.AzureStorageAccessKey;
+
+        /// <summary>
+        /// Gets the cloud storage.
+        /// </summary>
+        /// <value>The cloud storage.</value>
         public CloudStorageService CloudStorage { get; }
+        /// <summary>
+        /// Gets the file name formatter.
+        /// </summary>
+        /// <value>The file name formatter.</value>
         public FileNameFormatter FileNameFormatter { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileRepository"/> class.
+        /// </summary>
         public FileRepository()
         {
             var cloudFactory = new CloudProviderFactory(CloudProvider.Azure);
@@ -39,7 +55,7 @@ namespace Ludikore.Revoicer.Services.IO
         {
             var guid = Guid.NewGuid().ToString();
             var actualName = FileNameFormatter.SanitizeFileName(name);
-            var directoryPath = Path.Combine("/data/input", guid);
+            var directoryPath = Path.Combine("/data", guid, "input");
 
             Directory.CreateDirectory(directoryPath);
 
@@ -51,9 +67,9 @@ namespace Ludikore.Revoicer.Services.IO
                 await contents.CopyToAsync(fileStream);
             }
 
-            await CloudStorage.EnsureContainerExists(_bucketName);
+            await CloudStorage.EnsureContainerExists(ContainerName);
 
-            await CloudStorage.PutFile(_bucketName, file);
+            await CloudStorage.PutFile(ContainerName, file);
 
             return file;
         }
@@ -65,7 +81,7 @@ namespace Ludikore.Revoicer.Services.IO
         /// <returns>Stream.</returns>
         public async Task<Stream> GetFile(IFileDescriptor file)
         {
-            return await CloudStorage.GetFile(_bucketName, file);
+            return await CloudStorage.GetFile(ContainerName, file);
         }
 
         /// <summary>
@@ -75,7 +91,7 @@ namespace Ludikore.Revoicer.Services.IO
         /// <returns>System.String.</returns>
         public async Task<string> GetFileUrl(IFileDescriptor file)
         {
-            return await CloudStorage.GetFileUrl(_bucketName, file);
+            return await CloudStorage.GetFileUrl(ContainerName, file);
         }
 
         /// <summary>
