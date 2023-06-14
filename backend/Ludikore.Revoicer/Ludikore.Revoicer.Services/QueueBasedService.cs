@@ -1,17 +1,20 @@
 ﻿using System.Runtime.CompilerServices;
 using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services.AWS;
+using Ludikore.Revoicer.Services.Cloud;
 
 namespace Ludikore.Revoicer.Services;
 
 public abstract class QueueBasedService<TInput>
     where TInput : IQueueJobData 
 {
-    protected SQSFacade Sqs { get; }
+    protected CloudQueueService QueueService { get; }
 
     protected QueueBasedService(string inputQueue)
     {
-        Sqs = new SQSFacade();
+        var factory = new CloudProviderFactory(CloudProvider.Azure);
+
+        QueueService = factory.GetQueueService();
         InputQueue = inputQueue;
     }
 
@@ -19,6 +22,6 @@ public abstract class QueueBasedService<TInput>
      
     public async Task SubmitJob(TInput inputData)
     {
-        await Sqs.SendMessage(InputQueue, inputData);
+        await QueueService.SendMessage(InputQueue, inputData);
     }
 }

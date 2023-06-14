@@ -9,23 +9,24 @@ using System.Threading.Tasks;
 using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using Ludikore.Revoicer.Services.Cloud;
 using Newtonsoft.Json;
 
 namespace Ludikore.Revoicer.Services.AWS
 {
-    public class SQSFacade
+    public class SqsService : CloudQueueService
     {
         private readonly AmazonSQSClient sqs;
 
-        public SQSFacade()
+        public SqsService(string serviceUrl) : base()
         {
             sqs = new AmazonSQSClient(
                 new EnvironmentVariablesAWSCredentials(),
-                new AmazonSQSConfig { ServiceURL = "http://localstack:4566" }
+                new AmazonSQSConfig { ServiceURL = serviceUrl }
             );
         }
 
-        public async Task SendMessage<T>(string queueName, T message)
+        public override async Task SendMessage<T>(string queueName, T message)
         {
             var getQueueUrlResponse = await sqs.GetQueueUrlAsync(queueName);
 
@@ -39,8 +40,8 @@ namespace Ludikore.Revoicer.Services.AWS
             await sqs.SendMessageAsync(request);
         }
 
-        public async IAsyncEnumerable<SQSMessage<T?>> WaitForMessage<T>(string queueName,
-            Func<SQSMessage<T?>, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public override async IAsyncEnumerable<QueueMessage<T?>> WaitForMessage<T>(string queueName,
+            Func<QueueMessage<T?>, bool> predicate, [EnumeratorCancellation] CancellationToken cancellationToken = default) where T : default
         {
             var getQueueUrlResponse = await sqs.GetQueueUrlAsync(queueName, cancellationToken);
 
@@ -58,7 +59,7 @@ namespace Ludikore.Revoicer.Services.AWS
                 foreach (var message in response.Messages)
                 {
                     var body = JsonConvert.DeserializeObject<T>(message.Body);
-                    SQSMessage<T?> wrappedMessage = new SQSMessage<T?>()
+                    QueueMessage<T?> wrappedMessage = new QueueMessage<T?>()
                     {
                         Body = body,
                         ReceiptHandle = message.ReceiptHandle,
@@ -81,11 +82,5 @@ namespace Ludikore.Revoicer.Services.AWS
                 }
             }
         }
-    }
-
-    public class SQSMessage<T>
-    {
-        public T Body { get; set; }
-        public string ReceiptHandle { get; set; }
     }
 }

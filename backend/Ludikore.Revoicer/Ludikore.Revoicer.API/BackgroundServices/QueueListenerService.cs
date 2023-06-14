@@ -3,6 +3,7 @@ using Ludikore.Revoicer.Services.AWS;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Threading;
 using Ludikore.Revoicer.API.Hubs;
+using Ludikore.Revoicer.Services.Cloud;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
@@ -11,7 +12,7 @@ namespace Ludikore.Revoicer.API.BackgroundServices
     public abstract class QueueListenerService<TOutput> : BackgroundService
         where TOutput : IQueueJobData
     {
-        protected SQSFacade SQS { get;  }
+        protected CloudQueueService QueueService { get;  }
         public string OutputQueue { get;  }
         public string CompleteJobName { get;  }
 
@@ -21,7 +22,9 @@ namespace Ludikore.Revoicer.API.BackgroundServices
 
         protected QueueListenerService(string outputQueue, string completeJobName, ILogger<QueueListenerService<TOutput>> logger, IHubContext<RevoicerHub> context)
         {
-            SQS = new SQSFacade();
+            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure);
+
+            QueueService = cloudFactory.GetQueueService();
             OutputQueue = outputQueue;
             CompleteJobName = completeJobName;
             Context = context;
@@ -39,7 +42,7 @@ namespace Ludikore.Revoicer.API.BackgroundServices
         {
             try
             {
-                await foreach (var message in SQS.WaitForMessage<TOutput>(OutputQueue, (_) => true, stoppingToken))
+                await foreach (var message in QueueService.WaitForMessage<TOutput>(OutputQueue, stoppingToken))
                 {
                     Logger.LogInformation("Message received: {0}", JsonConvert.SerializeObject(message));
                     if (message.Body != null)

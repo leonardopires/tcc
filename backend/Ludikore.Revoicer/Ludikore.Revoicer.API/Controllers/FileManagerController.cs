@@ -1,6 +1,7 @@
 ﻿using System.Net.Mime;
 using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services;
+using Ludikore.Revoicer.Services.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -56,7 +57,7 @@ namespace Ludikore.Revoicer.API.Controllers
             var fileRepository = new FileRepository();
             try
             {
-                Console.WriteLine("Getting file from S3");
+                Console.WriteLine("Getting file from cloud storage");
                 await using var stream = await fileRepository.GetFile(file) as MemoryStream;
                 Console.WriteLine("Creating response");
                 return new FileContentResult(stream.ToArray(), "application/octet-stream");
@@ -91,9 +92,9 @@ namespace Ludikore.Revoicer.API.Controllers
             var fileRepository = new FileRepository();
             try
             {
-                Console.WriteLine("Getting file from S3");
+                Console.WriteLine("Getting file {0} from cloud storage", file.Name);
                 var url = await fileRepository.GetFileUrl(file);
-                Console.WriteLine("Redirecting to S3 URL: {0}", url);
+                Console.WriteLine("Redirecting to URL: {0}", url);
                 return Redirect(url);
             }
             finally

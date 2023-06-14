@@ -11,9 +11,14 @@ VOLUME /data
 WORKDIR /app
 
 RUN python3 -m pip install \
+    aiohttp==3.8.4 \
+    azure-storage-blob==12.16.0 \
+    azure-servicebus==7.11.0 \
     boto3==1.26.131 \
     botocore==1.29.131 \
+    cancel-token==0.1.6 \
     jmespath==1.0.1 \
+    marshmallow-dataclass==8.5.14 \
     pip==22.0.4 \
     python-dateutil==2.8.2 \
     s3transfer==0.6.1 \

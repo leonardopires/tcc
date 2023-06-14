@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="3.7.104.12" />
     <PackageReference Include="AWSSDK.SQS" Version="3.7.102.1" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.15.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.16.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 

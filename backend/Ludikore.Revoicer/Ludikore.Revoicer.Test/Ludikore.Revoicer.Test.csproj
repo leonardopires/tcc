@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ludikore.Revoicer.Services\Ludikore.Revoicer.Services.csproj" />
+  </ItemGroup>
+
 </Project>

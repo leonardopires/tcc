@@ -6,6 +6,9 @@ from backend.workers.common.WorkerBase import WorkerBase
 
 
 class SvcWorker(WorkerBase):
+    def __init__(self, queue_endpoint_url, storage_endpoint_url, input_queue_name, output_queue_name):
+        super().__init__(queue_endpoint_url, storage_endpoint_url, input_queue_name, output_queue_name)
+
     def get_local_path(self, file_info):
         return "/data/" + ([str(name) for name in file_info["Split"]
                 if str(name).endswith("/vocals.wav")][0])
@@ -24,9 +27,6 @@ class SvcWorker(WorkerBase):
                          or str(name) in input_message["Revoiced"]
                         ],
         }
-
-    def __init__(self, endpoint_url, aws_region, input_queue_name, output_queue_name):
-        super().__init__(endpoint_url, aws_region, input_queue_name, output_queue_name)
 
     def get_output_dir(self, file):
         return os.path.join(os.path.dirname(file))
@@ -56,6 +56,6 @@ class SvcWorker(WorkerBase):
         remote_path = self.get_remote_path(input_message)
         return file_name, output_dir, remote_path
 
-    def get_s3_path(self, file, input_message):
+    def get_blob_path(self, file, input_message):
         return f"{input_message['OperationId']}/{file}"
 

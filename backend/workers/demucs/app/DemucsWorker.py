@@ -25,8 +25,8 @@ class DemucsWorker(WorkerBase):
     def get_output_dir(self, file):
         return f"/data/separated/{self.model()}"
 
-    def __init__(self, endpoint_url, aws_region, input_queue_name, output_queue_name):
-        super().__init__(endpoint_url, aws_region, input_queue_name, output_queue_name)
+    def __init__(self, queue_endpoint_url, storage_endpoint_url, input_queue_name, output_queue_name):
+        super().__init__(queue_endpoint_url, storage_endpoint_url, input_queue_name, output_queue_name)
 
     def get_command_params(self, file, message):
         operation_id = message['OperationId']
@@ -62,7 +62,7 @@ class DemucsWorker(WorkerBase):
 
         return None, None, remote_path
 
-    def get_s3_path(self, file, input_message):
+    def get_blob_path(self, file, input_message):
         return f"output/{input_message['OperationId']}/{file}"
 
 

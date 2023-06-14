@@ -2,86 +2,53 @@ import json
 import os
 import subprocess
 import traceback
-import uuid
 from concurrent.futures import ThreadPoolExecutor
-from types import TracebackType
-
-import boto3
 from abc import ABCMeta, abstractmethod
 from time import sleep
 
+from azure.storage.blob import BlobServiceClient, BlobClient
+from azure.servicebus import ServiceBusClient
+
 
 class WorkerBase(metaclass=ABCMeta):
-    def __init__(self, endpoint_url, aws_region, input_queue_name, output_queue_name):
+    def __init__(self, queue_endpoint_url, storage_endpoint_url, input_queue_name, output_queue_name):
         self.command_name = "Demucs"
-        self.sqs = boto3.client("sqs", endpoint_url=endpoint_url, region_name=aws_region)
-        self.s3 = boto3.client("s3", endpoint_url=endpoint_url, region_name=aws_region)
+        self.blob_service_client = BlobServiceClient.from_connection_string(storage_endpoint_url)
         self.input_queue_name = input_queue_name
         self.output_queue_name = output_queue_name
         self.output_format = "mp3"
+        self.endpoint_url = queue_endpoint_url
+        self.servicebus_client = ServiceBusClient.from_connection_string(queue_endpoint_url)
+
+        self.queue_receive_client = self.servicebus_client.get_queue_receiver(
+            input_queue_name,
+            max_wait_time=10
+        )
 
     def ensure_queue_exists(self, queue_name):
-        response = self.sqs.create_queue(
-            QueueName=queue_name,
-            Attributes={
-                'MessageRetentionPeriod': '86400',
-                'FifoQueue': 'true',
-            },
-        )
-        return response
+        pass;
 
-    def get_queue_url(self, queue_name):
-        response = self.sqs.get_queue_url(QueueName=queue_name)
-        url = response["QueueUrl"]
-        return url
-
-    def receive_message(self, queue_name):
-        url = self.get_queue_url(queue_name)
-
-        response = self.sqs.receive_message(
-            QueueUrl=url,
-            AttributeNames=[
-                'SentTimestamp'
-            ],
-            MaxNumberOfMessages=1,
-            MessageAttributeNames=[
-                'All'
-            ],
-            VisibilityTimeout=0,
-            WaitTimeSeconds=0
-        )
-
-        message = None
-        receipt_handle = None
-        body = None
-
-        if "Messages" in response.keys():
-            messages = response["Messages"]
+    def receive_message(self):
+        messages = self.queue_receive_client.receive_messages(max_message_count=1, max_wait_time=10)
+        if messages:
             message = messages[0]
-            receipt_handle = message["ReceiptHandle"]
-            body = message["Body"]
+            receipt_handle = message.lock_token
+            body = message.body
             print("Message Body: ", body)
-        #    else:
-        #        print("No message found")
-
-        return receipt_handle, body, message
+            return receipt_handle, body, message
+        return None, None, None
 
     def delete_message(self, queue_name, receipt_handle):
-        url = self.get_queue_url(queue_name)
-        self.sqs.delete_message(QueueUrl=url, ReceiptHandle=receipt_handle)
+        self.queue_receive_client.complete_message(receipt_handle)
         print(f"Message {receipt_handle} removed from queue...")
 
     def send_message(self, queue_name, payload):
-        url = self.get_queue_url(queue_name)
-        body = json.dumps(payload)
-        response = self.sqs.send_message(
-            QueueUrl=url,
-            MessageBody=body,
-            MessageDeduplicationId=str(payload["OperationId"] + "_" + payload["Voice"]),
-            MessageGroupId=str(payload["JobId"]),
-        )
-        print("Message sent:", body)
-        return response
+        servicebus_client = self.servicebus_client
+        with servicebus_client:
+            queue_client = servicebus_client.get_queue_sender(queue_name)
+            message = json.dumps(payload)
+            queue_client.send_messages(message)
+        print("Message sent:", message)
 
     def execute_command(self, file, message):
         os.chdir("/data/")
@@ -93,18 +60,13 @@ class WorkerBase(metaclass=ABCMeta):
     def get_command_params(self, file, message):
         pass
 
-    def download_from_s3(self, bucket, remote_path, local_path):
-        index = local_path.rfind("/")
-        if index >= 0:
-            output_path = local_path[0:index:]
+    def download_from_storage(self, container_name, remote_path, local_path):
+        blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=remote_path)
+        with open(local_path, "wb") as file:
+            file.write(blob_client.download_blob().readall())
+        print(f"Downloaded from Azure Blob Storage: {remote_path} into {local_path}")
 
-            if not os.path.exists(output_path):
-                os.makedirs(output_path)
-
-            print(f"Downloading from S3: {remote_path} into {local_path}")
-            self.s3.download_file(bucket, remote_path, local_path)
-
-    def upload_results(self, bucket, local_path, remote_path, input_message):
+    def upload_results(self, container_name, local_path, remote_path, input_message):
         result = []
 
         print(f"Remote path 1 {remote_path}")
@@ -116,19 +78,20 @@ class WorkerBase(metaclass=ABCMeta):
 
         for file in files_to_upload:
             output_file = os.path.join(output_path, file)
+            blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=remote_path)
+            blob_path = self.get_blob_path(file, input_message)
 
-            s3_path = self.get_s3_path(file, input_message)
-
-            print(f"S3 Path: {s3_path}")
-            print(f"Uploading file: {output_file} to {s3_path}...")
-            self.s3.upload_file(output_file, bucket, s3_path)
-            result.append(s3_path)
+            print(f"Blob Path: {blob_path}")
+            print(f"Uploading file: {output_file} to {blob_path}...")
+            with open(output_file, "rb") as data:
+                blob_client.upload_blob(data, blob_type="BlockBlob")
+            result.append(blob_path)
             print("Done")
 
         return result
 
     @abstractmethod
-    def get_s3_path(self, file, input_message):
+    def get_blob_path(self, file, input_message):
         pass
 
     def get_files_to_upload(self, local_path, remote_path, input_message):
@@ -158,11 +121,11 @@ class WorkerBase(metaclass=ABCMeta):
     def get_local_path(self, file_info):
         pass
 
-    def get_data_bucket(self):
+    def get_data_container(self):
         return "revoicer"
 
     def receive_from_input_queue(self):
-        return self.receive_message(self.input_queue_name)
+        return self.receive_message()
 
     def ensure_all_queues_exist(self):
         self.ensure_queue_exists(self.input_queue_name)
@@ -205,15 +168,14 @@ class WorkerBase(metaclass=ABCMeta):
                     input_message = json.loads(body)
                     remote_path = self.get_remote_path(input_message)
                     local_path = self.get_local_path(input_message)
-                    bucket = self.get_data_bucket()
-                    print(f"Downloading from S3: s3://{bucket}/{remote_path} into {local_path}")
-                    # print(self.s3.list_objects(Bucket=bucket, Prefix="data"))
+                    container_name = self.get_data_container()
+                    print(f"Downloading from Azure Blob Storage: {container_name}/{remote_path} into {local_path}")
 
-                    self.download_from_s3(bucket, remote_path, local_path)
+                    self.download_from_storage(container_name, remote_path, local_path)
 
                     self.execute_command(local_path, input_message)
                     self.convert_to_output_format(local_path, input_message)
-                    results = self.upload_results(bucket, local_path, "output", input_message)
+                    results = self.upload_results(container_name, local_path, "output", input_message)
                     output_message = self.create_output_message(input_message, results)
                     self.send_message(self.output_queue_name, output_message)
                     self.delete_message(self.input_queue_name, receipt_handle)
