@@ -49,7 +49,7 @@ class RevoicerService(RevoicerBaseService):
         :param output_items: List[TWorkItem]: Pass the list of output work items to the function
         :return: The job object with the revoiced files added to it
         """
-        job.Revoiced = [str(file.RemotePath) for file in output_items]
+        job.Revoiced = [*job.Revoiced, *[str(file.RemotePath) for file in output_items]]
         return job
 
     def get_output_work_items(self, job: TJob) -> List[TWorkItem]:

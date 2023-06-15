@@ -51,7 +51,7 @@ class SplitService(RevoicerBaseService):
         :param output_items: List[TWorkItem]: Pass the list of files that were processed by the job
         :return: A job object that contains a list of the processed files
         """
-        job.Split = [str(file.RemotePath) for file in output_items]
+        job.Split = [*job.Split, *[str(file.RemotePath) for file in output_items]]
         print(f"Job is ready to be sent. Processed files: {str(job.Split)}")
         return job
 

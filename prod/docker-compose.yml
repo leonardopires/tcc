@@ -6,7 +6,8 @@ services:
   demucs:
     build:
       context: ../workers
-      dockerfile: demucs/Dockerfile
+      dockerfile: demucs/Dockerfile    
+        
     environment:
       - REVOICER_MODULE=workers.demucs
     volumes:
