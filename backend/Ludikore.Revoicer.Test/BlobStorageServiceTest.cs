@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ludikore.Revoicer.Model;
+using Ludikore.Revoicer.Services.Azure;
 using Ludikore.Revoicer.Services.Cloud;
 using Microsoft.Extensions.Configuration;
 
@@ -14,12 +15,14 @@ namespace Ludikore.Revoicer.Test
     /// </summary>
     public class BlobStorageServiceTest
     {
-        [Fact]
+        [Fact(DisplayName = "The " + nameof(BlobStorageService) + " must return a valid URL")]
         public async Task GenerateUrl()
         {
             // Arrange
-            var factory = new CloudProviderFactory(CloudProvider.Azure, new ConfigurationManager());
-            var subject = factory.GetStorageService();
+            var configBuilder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+            var cloudSettings = new CloudSettings(configBuilder.Build());
+
+            var subject = new BlobStorageService(cloudSettings);
             var expected = "TheCranberriesDreams1994.mp3";
 
             // Act

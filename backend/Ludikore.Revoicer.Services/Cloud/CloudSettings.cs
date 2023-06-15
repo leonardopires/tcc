@@ -20,6 +20,10 @@ public class CloudSettings
         AzureStorageAccessKey = LoadSetting("AZURE_STORAGE_ACCESS_KEY");
         AzureStorageContainerName = LoadSetting("AZURE_STORAGE_CONTAINER_NAME");
         AwsEndpoint = LoadSetting("AWS_ENDPOINT");
+        RevoiceInputQueue = LoadSetting("REVOICE_INPUT_QUEUE");
+        RevoiceOutputQueue = LoadSetting("REVOICE_OUTPUT_QUEUE");
+        SplitInputQueue = LoadSetting("SPLIT_INPUT_QUEUE");
+        SplitOutputQueue = LoadSetting("SPLIT_OUTPUT_QUEUE");
     }
 
 
@@ -65,6 +69,30 @@ public class CloudSettings
     /// </summary>
     /// <value>The aws endpoint.</value>
     public string AwsEndpoint { get; }
+
+    /// <summary>
+    /// Gets the revoice input queue.
+    /// </summary>
+    /// <value>The revoice input queue.</value>
+    public string RevoiceInputQueue { get; }
+
+    /// <summary>
+    /// Gets the revoice output queue.
+    /// </summary>
+    /// <value>The revoice output queue.</value>
+    public string RevoiceOutputQueue { get; }
+
+    /// <summary>
+    /// Gets the split input queue.
+    /// </summary>
+    /// <value>The split input queue.</value>
+    public string SplitInputQueue { get; }
+
+    /// <summary>
+    /// Gets the split output queue.
+    /// </summary>
+    /// <value>The split output queue.</value>
+    public string SplitOutputQueue { get; }
 
     /// <summary>
     /// Loads the setting with the specified name.

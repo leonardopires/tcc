@@ -17,18 +17,21 @@ namespace Ludikore.Revoicer.Services.Azure
     /// Implements the <see cref="CloudStorageService" />
     /// </summary>
     /// <seealso cref="CloudStorageService" />
-    internal class BlobStorageService : CloudStorageService
+    public class BlobStorageService : CloudStorageService
     {
         /// <summary>
-        /// The sas account key
+        /// Gets the cloud settings.
         /// </summary>
-        private readonly string _sasAccountKey;
+        /// <value>The cloud settings.</value>
+        protected CloudSettings CloudSettings { get; }
+
 
         /// <summary>
         /// Gets the service client.
         /// </summary>
         /// <value>The service client.</value>
         public BlobServiceClient ServiceClient { get; }
+
         /// <summary>
         /// Gets the file name formatter.
         /// </summary>
@@ -36,13 +39,18 @@ namespace Ludikore.Revoicer.Services.Azure
         private FileNameFormatter FileNameFormatter { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BlobStorageService"/> class.
+        /// Initializes a new instance of the <see cref="BlobStorageService" /> class.
         /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        /// <param name="sasAccountKey">The sas account key.</param>
-        public BlobStorageService(string connectionString, string sasAccountKey)
+        /// <param name="cloudSettings">The cloud settings.</param>
+        public BlobStorageService(CloudSettings cloudSettings)
         {
-            _sasAccountKey = sasAccountKey;
+            CloudSettings = cloudSettings;
+            
+            var connectionString = "DefaultEndpointsProtocol=https;" +
+                                   $"AccountName={CloudSettings.AzureAccountName};" +
+                                   $"AccountKey={CloudSettings.AzureStorageAccessKey};" +
+                                   "EndpointSuffix=core.windows.net";
+
             ServiceClient = new BlobServiceClient(connectionString);
             FileNameFormatter = new FileNameFormatter();
         }

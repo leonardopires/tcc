@@ -1,4 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TypeScriptTarget>ES2020</TypeScriptTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TypeScriptTarget>ES2020</TypeScriptTarget>
+  </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,6 +19,21 @@
     <SpaProxyServerUrl>https://localhost:44450</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>2fda1731-6d0c-4dac-abfe-5b7cc5d803d8</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <RootNamespace>Ludikore.Revoicer.Web</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <TypeScriptJSXEmit>preserve</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>system</TypeScriptModuleKind>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +45,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.16" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.16" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="2.11.1" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.11.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +59,15 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\backend\Ludikore.Revoicer.Model\Ludikore.Revoicer.Model.csproj" />
+    <ProjectReference Include="..\backend\Ludikore.Revoicer.Services\Ludikore.Revoicer.Services.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

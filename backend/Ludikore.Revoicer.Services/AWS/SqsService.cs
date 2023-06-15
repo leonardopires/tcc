@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Ludikore.Revoicer.Services.Cloud;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Ludikore.Revoicer.Services.AWS
@@ -21,10 +22,11 @@ namespace Ludikore.Revoicer.Services.AWS
         protected AmazonSQSClient SqsClient { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SqsService"/> class.
+        /// Initializes a new instance of the <see cref="SqsService" /> class.
         /// </summary>
         /// <param name="serviceUrl">The service URL.</param>
-        public SqsService(string serviceUrl) : base()
+        /// <param name="logger">The logger.</param>
+        public SqsService(string serviceUrl, ILogger<SqsService> logger) : base(logger)
         {
             SqsClient = new AmazonSQSClient(
                 new EnvironmentVariablesAWSCredentials(),

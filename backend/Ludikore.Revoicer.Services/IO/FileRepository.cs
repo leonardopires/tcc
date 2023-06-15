@@ -19,6 +19,15 @@ namespace Ludikore.Revoicer.Services.IO
     /// </summary>
     public class FileRepository
     {
+        /// <summary>
+        /// Gets the cloud settings.
+        /// </summary>
+        /// <value>The cloud settings.</value>
+        private CloudSettings CloudSettings { get; }
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        /// <value>The logger.</value>
         private ILogger<FileRepository> Logger { get; }
 
         /// <summary>
@@ -41,16 +50,16 @@ namespace Ludikore.Revoicer.Services.IO
         /// <summary>
         /// Initializes a new instance of the <see cref="FileRepository" /> class.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
+        /// <param name="cloudSettings">The cloud settings.</param>
         /// <param name="logger">The logger.</param>
-        public FileRepository(IConfiguration configuration, ILogger<FileRepository> logger)
+        /// <param name="cloudStorage">The cloud storage.</param>
+        public FileRepository(CloudSettings cloudSettings, ILogger<FileRepository> logger, CloudStorageService cloudStorage)
         {
+            CloudSettings = cloudSettings;
             Logger = logger;
-            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure, configuration);
-
             FileNameFormatter = new FileNameFormatter();
-            CloudStorage = cloudFactory.GetStorageService();
-            ContainerName = cloudFactory.CloudSettings.AzureStorageContainerName;
+            CloudStorage = cloudStorage;
+            ContainerName = CloudSettings.AzureStorageContainerName;
         }
 
         /// <summary>
@@ -66,11 +75,13 @@ namespace Ludikore.Revoicer.Services.IO
             var actualName = FileNameFormatter.SanitizeFileName(name);
             var directoryPath = Path.Combine("/data", guid, "input");
 
+            Logger.LogInformation("Creating directory: {0}", directoryPath);
             Directory.CreateDirectory(directoryPath);
 
             var file = new FileDescriptor(actualName, contentType, directoryPath);
 
 
+            Logger.LogInformation("Creating file: {0}", directoryPath);
             await using (var fileStream = File.Create(file.FilePath))
             {
                 await contents.CopyToAsync(fileStream);

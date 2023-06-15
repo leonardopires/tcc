@@ -1,10 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
 using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services;
+using Ludikore.Revoicer.Services.Application;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
-namespace Ludikore.Revoicer.API.Hubs
+namespace Ludikore.Revoicer.Web.Hubs
 {
     /// <summary>
     /// This is the SignalR hub that enables communication through WebSockets
@@ -16,6 +17,11 @@ namespace Ludikore.Revoicer.API.Hubs
         private SplitterService Splitter { get; }
         private RevoicerService Revoicer { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RevoicerHub"/> class.
+        /// </summary>
+        /// <param name="splitter">The splitter.</param>
+        /// <param name="revoicer">The revoicer.</param>
         public RevoicerHub(SplitterService splitter, RevoicerService revoicer)
         {
             Splitter = splitter;

@@ -1,11 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using Ludikore.Revoicer.Model;
-using Ludikore.Revoicer.Services.AWS;
+﻿using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services.Cloud;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Ludikore.Revoicer.Services;
+namespace Ludikore.Revoicer.Services.Application;
 
 /// <summary>
 /// This class provides the base functionality for a service that will submit jobs into a queue to be collected by a worker service.
@@ -30,13 +28,11 @@ public abstract class QueueBasedService<TInput>
     /// Initializes a new instance of the <see cref="QueueBasedService{TInput}" /> class.
     /// </summary>
     /// <param name="inputQueue">The input queue.</param>
-    /// <param name="configuration">The configuration.</param>
-    /// <param name="logger"></param>
-    protected QueueBasedService(string inputQueue, IConfiguration configuration, ILogger<QueueBasedService<TInput>> logger)
+    /// <param name="queueService">The queue service.</param>
+    /// <param name="logger">The logger.</param>
+    protected QueueBasedService(string inputQueue, CloudQueueService queueService, ILogger<QueueBasedService<TInput>> logger)
     {
-        var factory = new CloudProviderFactory(CloudProvider.Azure, configuration);
-
-        QueueService = factory.GetQueueService();
+        QueueService = queueService;
         InputQueue = inputQueue;
     }
 

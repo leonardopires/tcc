@@ -1,15 +1,8 @@
 version: '3.4'
 
-services:
-  ludikore.revoicer.api:
-    image: ${DOCKER_REGISTRY-}ludikorerevoicerapi
-    depends_on:
-      - svc
-      - demucs
-    build:
-      context: ./backend
-      dockerfile: Ludikore.Revoicer.API/Dockerfile
+name: revoicer
 
+services:
   demucs:
     build:
       context: ./workers
@@ -18,7 +11,7 @@ services:
       - REVOICER_MODULE=workers.demucs
     volumes:
       - ./workers:/app/workers
-      - ./data/demucs:/data
+      - ./data:/data
 
   svc:
     build:
@@ -28,16 +21,19 @@ services:
       - REVOICER_MODULE=workers.svc
     volumes:
       - ./workers:/app/workers
-      - ./data/svc:/data
+      - ./data:/data
       - ./models:/models
 
-  revoicer-web:
+  web:
     build:
-      context: ./frontend
+      context: ./web    
+      
     depends_on:
-      - ludikore.revoicer.api
-    ports:
-      - "3000:3000"
+      - demucs
+      - svc
     volumes:
       - ./frontend/:/app
-      - ./data/frontend:/data
+      - ./data:/data
+    
+  
+

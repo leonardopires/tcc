@@ -13,6 +13,7 @@ public class FileDescriptor : IFileDescriptor
     /// Initializes a new instance of the <see cref="FileDescriptor"/> class.
     /// </summary>
     /// <remarks>Intended to be used for JSON serialization only.</remarks>
+    // ReSharper disable once UnusedMember.Global
     public FileDescriptor()
     {
     }
@@ -34,17 +35,17 @@ public class FileDescriptor : IFileDescriptor
     /// Gets or sets the file name.
     /// </summary>
     /// <value>The name.</value>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the file path.
     /// </summary>
     /// <value>The file path.</value>
-    public string FilePath { get; set; }
+    public string FilePath { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the type of the content.
     /// </summary>
     /// <value>The type of the content.</value>
-    public string ContentType { get; set; }
+    public string ContentType { get; set; } = null!;
 }

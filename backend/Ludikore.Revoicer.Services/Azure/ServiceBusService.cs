@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Ludikore.Revoicer.Services.Cloud;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Ludikore.Revoicer.Services.Azure
@@ -18,17 +19,30 @@ namespace Ludikore.Revoicer.Services.Azure
     public class ServiceBusService : CloudQueueService
     {
         /// <summary>
+        /// Gets the cloud settings.
+        /// </summary>
+        /// <value>The cloud settings.</value>
+        private CloudSettings CloudSettings { get; }
+
+        /// <summary>
         /// Gets the service bus client.
         /// </summary>
         /// <value>The service bus client.</value>
         protected ServiceBusClient ServiceBusClient { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ServiceBusService"/> class.
+        /// Initializes a new instance of the <see cref="ServiceBusService" /> class.
         /// </summary>
-        /// <param name="connectionString">The connection string.</param>
-        public ServiceBusService(string connectionString) : base()
+        /// <param name="cloudSettings">The cloud provider settings.</param>
+        /// <param name="logger">The logger.</param>
+        public ServiceBusService(CloudSettings cloudSettings, ILogger<ServiceBusService> logger) : base(logger)
         {
+            CloudSettings = cloudSettings;
+            var connectionString = $"Endpoint={CloudSettings.AzureServiceBusEndpoint};" +
+                                   $"SharedAccessKeyName={CloudSettings.AzureServiceBusAccessKeyName};" +
+                                   $"SharedAccessKey={CloudSettings.AzureServiceBusAccessKeyValue};" +
+                                   $"AccountName={CloudSettings.AzureAccountName}";
+
             ServiceBusClient = new ServiceBusClient(connectionString);
         }
 
@@ -43,6 +57,8 @@ namespace Ludikore.Revoicer.Services.Azure
         {
             var sender = ServiceBusClient.CreateSender(queueName);
             var jsonMessage = JsonConvert.SerializeObject(message);
+            Logger.LogInformation($"Sending message to queue {queueName}: {jsonMessage}");
+
             var serviceBusMessage = new ServiceBusMessage(jsonMessage);
             await sender.SendMessageAsync(serviceBusMessage);
         }
@@ -63,12 +79,15 @@ namespace Ludikore.Revoicer.Services.Azure
                 ReceiveMode = ServiceBusReceiveMode.PeekLock,
             });
 
+            Logger.LogInformation($"Listening to queue {queueName}...");
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 var messages = await receiver.ReceiveMessagesAsync(1, TimeSpan.FromSeconds(10), cancellationToken);
                 foreach (var message in messages)
                 {
-                    var body = JsonConvert.DeserializeObject<T>(message.Body.ToString());
+                    var bodyString = message.Body.ToString();
+                    var body = JsonConvert.DeserializeObject<T>(bodyString);
                     QueueMessage<T?> wrappedMessage = new QueueMessage<T?>
                     {
                         Body = body,
@@ -77,6 +96,8 @@ namespace Ludikore.Revoicer.Services.Azure
 
                     if (predicate(wrappedMessage))
                     {
+                        Logger.LogInformation($"Received a message that matches the predicate from {queueName}: \n{bodyString}");
+
                         yield return wrappedMessage;
                         await receiver.CompleteMessageAsync(message, cancellationToken);
                     }

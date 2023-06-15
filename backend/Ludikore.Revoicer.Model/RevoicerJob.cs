@@ -1,6 +1,4 @@
-using Ludikore.Revoicer.Model;
-
-namespace Ludikore.Revoicer.Services;
+namespace Ludikore.Revoicer.Model;
 
 /// <summary>
 /// Represents a job submitted for workers in the Revoicer system.
@@ -26,19 +24,19 @@ public class RevoicerJob : IRevoicerJob
     /// Gets or sets the file name.
     /// </summary>
     /// <value>The name.</value>
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the file path.
     /// </summary>
     /// <value>The file path.</value>
-    public string FilePath { get; set; }
+    public string FilePath { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the type of the content.
     /// </summary>
     /// <value>The type of the content.</value>
-    public string ContentType { get; set; }
+    public string ContentType { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the operation identifier.
@@ -50,7 +48,7 @@ public class RevoicerJob : IRevoicerJob
     /// Gets or sets the voice.
     /// </summary>
     /// <value>The voice.</value>
-    public string Voice { get; set; }
+    public string Voice { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the input.

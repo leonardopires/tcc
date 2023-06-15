@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+  
+  demucs:
+    environment:
+      - REVOICER_AZURE_SB_ACCESS_KEY_NAME=Revoicer
+      - REVOICER_AZURE_SB_ACCESS_KEY_VALUE=Q39eKIIGssZFxwtHwy0fnt34SAhM5yzJd+ASbO2XqBo=
+      - REVOICER_AZURE_SB_ENDPOINT=sb://revoicer.servicebus.windows.net/
+      - REVOICER_AZURE_ACCOUNT_NAME=revoicer
+      - REVOICER_AZURE_STORAGE_ACCESS_KEY=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==
+      - REVOICER_AZURE_STORAGE_CONTAINER_NAME=revoicer
+      - REVOICER_INPUT_QUEUE_NAME=revoicer-demucs-input.prod
+      - REVOICER_OUTPUT_QUEUE_NAME=revoicer-demucs-output.prod
+      - REVOICER_DEMUCS_MODEL=htdemucs_6s
+      - REVOICER_DEMUCS_SHIFTS=2
+
+    deploy:
+      resources:
+        limits:
+          cpus: '6'
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    
+
+  svc:
+    environment:
+      - REVOICER_AZURE_SB_ACCESS_KEY_NAME=Revoicer
+      - REVOICER_AZURE_SB_ACCESS_KEY_VALUE=Q39eKIIGssZFxwtHwy0fnt34SAhM5yzJd+ASbO2XqBo=
+      - REVOICER_AZURE_SB_ENDPOINT=sb://revoicer.servicebus.windows.net/
+      - REVOICER_AZURE_ACCOUNT_NAME=revoicer
+      - REVOICER_AZURE_STORAGE_ACCESS_KEY=0V+Dn/QnQ7tRSwaevHymXGtR/UgstoMITdhotUxGRtPDc5/wz+wj7QmQpHqWxP+N7eUI5LzHlwIp+AStdfhaKg==
+      - REVOICER_AZURE_STORAGE_CONTAINER_NAME=revoicer
+      - REVOICER_INPUT_QUEUE_NAME=revoicer-svc-input.prod
+      - REVOICER_OUTPUT_QUEUE_NAME=revoicer-svc-output.prod
+
+    deploy:
+      resources:
+        limits:
+          cpus: '6'
+          memory: 4G
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]

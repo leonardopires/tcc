@@ -13,10 +13,7 @@
         </option>
         <option name="services">
           <list>
-            <option value="ludikore.revoicer.api" />
-            <option value="demucs" />
-            <option value="svc" />
-            <option value="revoicer-web" />
+            <option value="web" />
           </list>
         </option>
         <option name="sourceFilePath" value="docker-compose.yml" />

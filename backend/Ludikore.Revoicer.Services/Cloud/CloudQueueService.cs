@@ -1,11 +1,24 @@
-﻿using System.Runtime.CompilerServices;
-using Amazon.Runtime;
-using Amazon.SQS;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Ludikore.Revoicer.Services.Cloud;
 
 public abstract class CloudQueueService
 {
+    /// <summary>
+    /// Gets the logger.
+    /// </summary>
+    /// <value>The logger.</value>
+    protected ILogger<CloudQueueService> Logger { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CloudQueueService"/> class.
+    /// </summary>
+    /// <param name="logger">The logger.</param>
+    protected CloudQueueService(ILogger<CloudQueueService> logger)
+    {
+        Logger = logger;
+    }
+
     /// <summary>
     /// Sends the message into the specified cloud queue.
     /// </summary>
@@ -38,5 +51,4 @@ public abstract class CloudQueueService
     {
         return WaitForMessage<T>(queueName, (_) => true, cancellationToken);
     }
-
 }

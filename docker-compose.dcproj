@@ -14,5 +14,10 @@
     </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="prod\docker-compose.override.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="prod\docker-compose.yml" />
+    <None Include="prod\run.cmd" />
   </ItemGroup>
 </Project>

@@ -1,10 +1,10 @@
-﻿using Ludikore.Revoicer.API.Hubs;
-using Ludikore.Revoicer.Model;
+﻿using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services.Cloud;
+using Ludikore.Revoicer.Web.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 
-namespace Ludikore.Revoicer.API.BackgroundServices
+namespace Ludikore.Revoicer.Web.BackgroundServices
 {
     /// <summary>
     /// This is the base class for a service that listens to the output of a cloud queue and sends the results to the client using websockets.
@@ -50,14 +50,12 @@ namespace Ludikore.Revoicer.API.BackgroundServices
         /// <param name="completeJobName">Name of the complete job.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="context">The context.</param>
-        /// <param name="configuration">The configuration.</param>
+        /// <param name="queueService">The queue service.</param>
         protected QueueListenerService(string outputQueue, string completeJobName,
             ILogger<QueueListenerService<TOutput>> logger, IHubContext<RevoicerHub> context,
-            IConfiguration configuration)
+            CloudQueueService queueService)
         {
-            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure, configuration);
-
-            QueueService = cloudFactory.GetQueueService();
+            QueueService = queueService;
             OutputQueue = outputQueue;
             CompleteJobName = completeJobName;
             Context = context;

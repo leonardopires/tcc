@@ -1,14 +1,15 @@
-﻿using Ludikore.Revoicer.API.Hubs;
-using Ludikore.Revoicer.Services;
+﻿using Ludikore.Revoicer.Model;
+using Ludikore.Revoicer.Services.Cloud;
+using Ludikore.Revoicer.Web.Hubs;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Ludikore.Revoicer.API.BackgroundServices
+namespace Ludikore.Revoicer.Web.BackgroundServices
 {
     /// <summary>
     /// This service listens to the splitter queue so we can return the results to the user.
-    /// Implements the <see cref="Ludikore.Revoicer.API.BackgroundServices.QueueListenerService{Ludikore.Revoicer.Services.RevoicerJob}" />
+    /// Implements the <see cref="QueueListenerService{RevoicerJob}" />
     /// </summary>
-    /// <seealso cref="Ludikore.Revoicer.API.BackgroundServices.QueueListenerService{Ludikore.Revoicer.Services.RevoicerJob}" />
+    /// <seealso cref="QueueListenerService{RevoicerJob}" />
     public class SplitterListenerService : QueueListenerService<RevoicerJob>
     {
         /// <summary>
@@ -16,13 +17,15 @@ namespace Ludikore.Revoicer.API.BackgroundServices
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="context">The context.</param>
-        /// <param name="configuration">The configuration.</param>
+        /// <param name="queueService">The queue service.</param>
+        /// <param name="cloudSettings">The cloud settings.</param>
         public SplitterListenerService(
             ILogger<QueueListenerService<RevoicerJob>> logger,
             IHubContext<RevoicerHub> context,
-            IConfiguration configuration
+            CloudQueueService queueService,
+            CloudSettings cloudSettings
         )
-            : base("revoicer-demucs-output.fifo", "SplitComplete", logger, context, configuration)
+            : base(cloudSettings.SplitOutputQueue, "SplitComplete", logger, context, queueService)
         {
         }
     }

@@ -10,11 +10,11 @@ public class QueueMessage<T>
     /// Gets or sets the body.
     /// </summary>
     /// <value>The body.</value>
-    public T Body { get; set; }
+    public T Body { get; set; } = default!;
 
     /// <summary>
     /// Gets or sets the receipt handle.
     /// </summary>
     /// <value>The receipt handle.</value>
-    public string ReceiptHandle { get; set; }
+    public string ReceiptHandle { get; set; } = null!;
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amazon.Runtime.Internal.Util;
+﻿using Ludikore.Revoicer.Model;
+using Ludikore.Revoicer.Services.Cloud;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Ludikore.Revoicer.Services
+namespace Ludikore.Revoicer.Services.Application
 {
     /// <summary>
     /// Submits jobs for the splitter (demucs) worker.
@@ -19,7 +15,8 @@ namespace Ludikore.Revoicer.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="SplitterService"/> class.
         /// </summary>
-        public SplitterService(IConfiguration configuration, ILogger<SplitterService> logger) : base("revoicer-demucs-input.fifo", configuration, logger)
+        public SplitterService(CloudSettings cloudSettings, CloudQueueService queueService, ILogger<SplitterService> logger) 
+            : base(cloudSettings.SplitInputQueue, queueService, logger)
         {
         }
     }

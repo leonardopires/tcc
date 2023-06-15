@@ -1,26 +1,50 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.EntityFrameworkCore;
-using web.Data;
-using web.Models;
+using Ludikore.Revoicer.Web.Hubs;
+using Ludikore.Revoicer.Services;
+using Ludikore.Revoicer.Services.Application;
+using Ludikore.Revoicer.Services.Azure;
+using Ludikore.Revoicer.Services.Cloud;
+using Ludikore.Revoicer.Services.IO;
+using Ludikore.Revoicer.Web.BackgroundServices;
+using Microsoft.Extensions.FileProviders;
+using System.Net;
+using Microsoft.Build.Execution;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables("REVOICER_").AddJsonFile("appsettings.json");
+
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer()
+    .AddSwaggerGen(c => { c.SwaggerDoc("v1", new() { Title = "Ludikore.Revoicer.API", Version = "v1" }); })
+    .AddCors()
+    .AddSignalR(options => { options.EnableDetailedErrors = true; });
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddLogging();
+builder.Services.AddSingleton<CloudSettings>();
 
-builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+builder.Services.AddTransient<CloudQueueService, ServiceBusService>();
+builder.Services.AddTransient<CloudStorageService, BlobStorageService>();
 
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+builder.Services.AddHostedService<RevoicerListenerService>();
+builder.Services.AddHostedService<SplitterListenerService>();
+
+builder.Services.AddScoped<FileRepository>();
+builder.Services.AddScoped<SplitterService>();
+builder.Services.AddScoped<RevoicerService>();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardLimit = 2;
+        options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
+        options.ForwardedForHeaderName = "X-Forwarded-For-My-Custom-Header-Name";
+    });
+}
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -28,23 +52,26 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseWebSockets();
 app.UseStaticFiles();
-app.UseRouting();
 
-app.UseAuthentication();
-app.UseIdentityServer();
-app.UseAuthorization();
+
+// app.UseAuthentication();
+// app.UseAuthorization();
+app.UseCors(
+    a => a
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .SetIsOriginAllowed(host => true)
+);
+
+app.MapControllers();
+app.MapHub<RevoicerHub>("/api/revoicer");
 
 app.MapControllerRoute(
     name: "default",

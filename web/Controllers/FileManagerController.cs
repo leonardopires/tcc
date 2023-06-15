@@ -4,7 +4,7 @@ using Ludikore.Revoicer.Services.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 
-namespace Ludikore.Revoicer.API.Controllers
+namespace Ludikore.Revoicer.Web.Controllers
 {
     /// <summary>
     /// This controller allows the client to upload and download files from our cloud storage.
@@ -15,6 +15,10 @@ namespace Ludikore.Revoicer.API.Controllers
     [ApiController]
     public class FileManagerController : ControllerBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileManagerController"/> class.
+        /// </summary>
+        /// <param name="fileRepository">The file repository.</param>
         public FileManagerController(FileRepository fileRepository)
         {
             FileRepository = fileRepository;
@@ -74,13 +78,19 @@ namespace Ludikore.Revoicer.API.Controllers
         public async Task<FileContentResult> DownloadFile([FromQuery] string filePath)
         {
             var directoryPath = Path.GetDirectoryName(filePath);
+
+            if (directoryPath == null)
+            {
+                throw new IOException($"Could not obtain a directory from path: {filePath}");
+            }
+
             var fileName = Path.GetFileName(filePath);
 
             var file = new FileDescriptor(fileName, "audio/wav", directoryPath);
             try
             {
                 Console.WriteLine("Getting file from cloud storage");
-                await using var stream = await FileRepository.GetFile(file) as MemoryStream;
+                await using var stream = (MemoryStream)await FileRepository.GetFile(file);
                 Console.WriteLine("Creating response");
                 return new FileContentResult(stream.ToArray(), "application/octet-stream")
                 {

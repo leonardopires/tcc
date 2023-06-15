@@ -1,0 +1,27 @@
+version: '3.4'
+
+name: revoicer-prod
+
+services:
+  demucs:
+    build:
+      context: ../workers
+      dockerfile: demucs/Dockerfile
+    environment:
+      - REVOICER_MODULE=workers.demucs
+    volumes:
+      - ../workers:/app/workers
+      - ../data:/data
+
+  svc:
+    build:
+      context: ../workers
+      dockerfile: svc/Dockerfile
+    environment:
+      - REVOICER_MODULE=workers.svc
+    volumes:
+      - ../workers:/app/workers
+      - ../data:/data
+      - ../models:/models
+      
+
