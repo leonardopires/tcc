@@ -13,16 +13,23 @@ namespace Ludikore.Revoicer.API.Hubs
     /// <seealso cref="Hub" />
     public class RevoicerHub : Hub
     {
+        private SplitterService Splitter { get; }
+        private RevoicerService Revoicer { get; }
+
+        public RevoicerHub(SplitterService splitter, RevoicerService revoicer)
+        {
+            Splitter = splitter;
+            Revoicer = revoicer;
+        }
+
         /// <summary>
         /// Submits the song to be split into multiple channels by our worker services.
         /// </summary>
         /// <param name="song">The song.</param>
         public async Task SplitSong(RevoicerJob song)
         {
-            song.JobId = this.Context.ConnectionId;
-            var service = new SplitterService();
-
-            await service.SubmitJob(song);
+            song.JobId = Context.ConnectionId;
+            await Splitter.SubmitJob(song);
         }
 
         /// <summary>
@@ -31,10 +38,8 @@ namespace Ludikore.Revoicer.API.Hubs
         /// <param name="song">The song.</param>
         public async Task RevoiceSong(RevoicerJob song)
         {
-            song.JobId = this.Context.ConnectionId;
-            var service = new RevoicerService();
-
-            await service.SubmitJob(song);
+            song.JobId = Context.ConnectionId;
+            await Revoicer.SubmitJob(song);
         }
     }
 }

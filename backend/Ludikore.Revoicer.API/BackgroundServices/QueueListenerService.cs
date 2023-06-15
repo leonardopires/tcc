@@ -1,8 +1,5 @@
-﻿using Ludikore.Revoicer.Model;
-using Ludikore.Revoicer.Services.AWS;
-using Microsoft.AspNetCore.Components.Forms;
-using System.Threading;
-using Ludikore.Revoicer.API.Hubs;
+﻿using Ludikore.Revoicer.API.Hubs;
+using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services.Cloud;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
@@ -47,15 +44,18 @@ namespace Ludikore.Revoicer.API.BackgroundServices
         protected IHubContext<RevoicerHub> Context { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QueueListenerService{TOutput}"/> class.
+        /// Initializes a new instance of the <see cref="QueueListenerService{TOutput}" /> class.
         /// </summary>
         /// <param name="outputQueue">The output queue.</param>
         /// <param name="completeJobName">Name of the complete job.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="context">The context.</param>
-        protected QueueListenerService(string outputQueue, string completeJobName, ILogger<QueueListenerService<TOutput>> logger, IHubContext<RevoicerHub> context)
+        /// <param name="configuration">The configuration.</param>
+        protected QueueListenerService(string outputQueue, string completeJobName,
+            ILogger<QueueListenerService<TOutput>> logger, IHubContext<RevoicerHub> context,
+            IConfiguration configuration)
         {
-            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure);
+            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure, configuration);
 
             QueueService = cloudFactory.GetQueueService();
             OutputQueue = outputQueue;

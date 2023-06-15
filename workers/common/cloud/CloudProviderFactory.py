@@ -7,24 +7,24 @@ from workers.common.cloud.CloudQueueService import CloudQueueService
 from workers.common.cloud.CloudStorageService import CloudStorageService
 
 
-AZURE_SB_ENDPOINT = os.environ["AZURE_SB_ENDPOINT"]
-AZURE_SB_ACCESS_KEY_NAME = os.environ["AZURE_SB_ACCESS_KEY_NAME"]
-AZURE_SB_ACCESS_KEY_VALUE = os.environ["AZURE_SB_ACCESS_KEY_VALUE"]
+AZURE_SB_ENDPOINT = os.environ["REVOICER_AZURE_SB_ENDPOINT"]
+AZURE_SB_ACCESS_KEY_NAME = os.environ["REVOICER_AZURE_SB_ACCESS_KEY_NAME"]
+AZURE_SB_ACCESS_KEY_VALUE = os.environ["REVOICER_AZURE_SB_ACCESS_KEY_VALUE"]
 
-AZURE_ACCOUNT_NAME = os.environ["AZURE_ACCOUNT_NAME"]
-AZURE_STORAGE_ACCESS_KEY = os.environ["AZURE_STORAGE_ACCESS_KEY"]
-AZURE_STORAGE_CONTAINER_NAME = os.environ["AZURE_STORAGE_CONTAINER_NAME"]
+AZURE_ACCOUNT_NAME = os.environ["REVOICER_AZURE_ACCOUNT_NAME"]
+AZURE_STORAGE_ACCESS_KEY = os.environ["REVOICER_AZURE_STORAGE_ACCESS_KEY"]
+AZURE_STORAGE_CONTAINER_NAME = os.environ["REVOICER_AZURE_STORAGE_CONTAINER_NAME"]
 
 # Settings
 QUEUE_CONNECTION_STRING = f"Endpoint={AZURE_SB_ENDPOINT};" \
                           f"SharedAccessKeyName={AZURE_SB_ACCESS_KEY_NAME};" \
-                          f"SharedAccessKey={AZURE_SB_ACCESS_KEY_NAME};" \
-                          f"AccountName={AZURE_ACCOUNT_NAME}"
+                          f"SharedAccessKey={AZURE_SB_ACCESS_KEY_VALUE};" \
+                          f"AccountName={AZURE_ACCOUNT_NAME};"
 
-STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;" \
+STORAGE_CONNECTION_STRING = f"DefaultEndpointsProtocol=https;" \
                             f"AccountName={AZURE_ACCOUNT_NAME};" \
                             f"AccountKey={AZURE_STORAGE_ACCESS_KEY};" \
-                            "EndpointSuffix=core.windows.net"
+                            f"EndpointSuffix=core.windows.net;"
 class CloudProviderFactory:
     def __init__(self, cloud_provider: CloudProvider):
         self.cloud_provider = cloud_provider

@@ -3,11 +3,14 @@ using Ludikore.Revoicer.Model;
 using System.Xml.Linq;
 using Amazon;
 using Amazon.Runtime;
+using Amazon.Runtime.Internal.Util;
 using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon.S3.Model;
 using Ludikore.Revoicer.Services.AWS;
 using Ludikore.Revoicer.Services.Cloud;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Ludikore.Revoicer.Services.IO
 {
@@ -16,11 +19,13 @@ namespace Ludikore.Revoicer.Services.IO
     /// </summary>
     public class FileRepository
     {
+        private ILogger<FileRepository> Logger { get; }
+
         /// <summary>
         /// Gets the name of the container.
         /// </summary>
         /// <value>The name of the container.</value>
-        public string ContainerName { get; } = CloudSettings.AzureStorageAccessKey;
+        public string ContainerName { get; }
 
         /// <summary>
         /// Gets the cloud storage.
@@ -34,14 +39,18 @@ namespace Ludikore.Revoicer.Services.IO
         public FileNameFormatter FileNameFormatter { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileRepository"/> class.
+        /// Initializes a new instance of the <see cref="FileRepository" /> class.
         /// </summary>
-        public FileRepository()
+        /// <param name="configuration">The configuration.</param>
+        /// <param name="logger">The logger.</param>
+        public FileRepository(IConfiguration configuration, ILogger<FileRepository> logger)
         {
-            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure);
+            Logger = logger;
+            var cloudFactory = new CloudProviderFactory(CloudProvider.Azure, configuration);
 
             FileNameFormatter = new FileNameFormatter();
             CloudStorage = cloudFactory.GetStorageService();
+            ContainerName = cloudFactory.CloudSettings.AzureStorageContainerName;
         }
 
         /// <summary>

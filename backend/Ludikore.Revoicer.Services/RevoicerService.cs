@@ -1,4 +1,7 @@
-﻿namespace Ludikore.Revoicer.Services;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
+namespace Ludikore.Revoicer.Services;
 
 /// <summary>
 /// Submits jobs for the Revoicer (SVC) worker.
@@ -10,7 +13,7 @@ public class RevoicerService : QueueBasedService<RevoicerJob>
     /// <summary>
     /// Initializes a new instance of the <see cref="RevoicerService"/> class.
     /// </summary>
-    public RevoicerService() : base("revoicer-svc-input.fifo")
+    public RevoicerService(IConfiguration configuration, ILogger<RevoicerService> logger) : base("revoicer-svc-input.fifo", configuration, logger)
     {
     }
 }

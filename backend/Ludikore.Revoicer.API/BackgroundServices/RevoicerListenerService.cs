@@ -12,12 +12,17 @@ namespace Ludikore.Revoicer.API.BackgroundServices
     public class RevoicerListenerService : QueueListenerService<RevoicerJob>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RevoicerListenerService"/> class.
+        /// Initializes a new instance of the <see cref="RevoicerListenerService" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="context">The context.</param>
-        public RevoicerListenerService(ILogger<QueueListenerService<RevoicerJob>> logger, IHubContext<RevoicerHub> context) 
-            : base("revoicer-svc-output.fifo", "RevoiceComplete", logger, context)
+        /// <param name="configuration">The configuration.</param>
+        public RevoicerListenerService(
+            ILogger<QueueListenerService<RevoicerJob>> logger, 
+            IHubContext<RevoicerHub> context,
+            IConfiguration configuration
+            ) 
+            : base("revoicer-svc-output.fifo", "RevoiceComplete", logger, context, configuration)
         {
             
         }

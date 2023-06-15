@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ludikore.Revoicer.Model;
 using Ludikore.Revoicer.Services.Cloud;
+using Microsoft.Extensions.Configuration;
 
 namespace Ludikore.Revoicer.Test
 {
@@ -17,7 +18,7 @@ namespace Ludikore.Revoicer.Test
         public async Task GenerateUrl()
         {
             // Arrange
-            var factory = new CloudProviderFactory(CloudProvider.Azure);
+            var factory = new CloudProviderFactory(CloudProvider.Azure, new ConfigurationManager());
             var subject = factory.GetStorageService();
             var expected = "TheCranberriesDreams1994.mp3";
 

@@ -15,22 +15,30 @@ namespace Ludikore.Revoicer.API.Controllers
     [ApiController]
     public class FileManagerController : ControllerBase
     {
+        public FileManagerController(FileRepository fileRepository)
+        {
+            FileRepository = fileRepository;
+        }
+
+        /// <summary>
+        /// Gets the file repository.
+        /// </summary>
+        /// <value>The file repository.</value>
+        private FileRepository FileRepository { get; }
+
         /// <summary>
         /// Allows the user to upload files into our cloud storage.
         /// </summary>
-        /// <param name="files">The files.</param>
         /// <returns>IList&lt;RevoicerJob&gt;.</returns>
         [HttpPost("upload")]
-        public async Task<IList<RevoicerJob>> UploadFiles(IList<IFormFile> files)
+        public async Task<IList<RevoicerJob>> UploadFiles()
         {
             var result = new List<RevoicerJob>();
-            var fileRepository = new FileRepository();
-            var splitter = new SplitterService();
 
             foreach (var formFile in Request.Form.Files)
             {
                 await using var contents = formFile.OpenReadStream();
-                var fileDescriptor = await fileRepository.CreateFile(formFile.Name, formFile.ContentType, contents);
+                var fileDescriptor = await FileRepository.CreateFile(formFile.Name, formFile.ContentType, contents);
 
                 Console.WriteLine($"File created: {fileDescriptor.FilePath}");
 
@@ -69,11 +77,10 @@ namespace Ludikore.Revoicer.API.Controllers
             var fileName = Path.GetFileName(filePath);
 
             var file = new FileDescriptor(fileName, "audio/wav", directoryPath);
-            var fileRepository = new FileRepository();
             try
             {
                 Console.WriteLine("Getting file from cloud storage");
-                await using var stream = await fileRepository.GetFile(file) as MemoryStream;
+                await using var stream = await FileRepository.GetFile(file) as MemoryStream;
                 Console.WriteLine("Creating response");
                 return new FileContentResult(stream.ToArray(), "application/octet-stream")
                 {
@@ -116,11 +123,11 @@ namespace Ludikore.Revoicer.API.Controllers
             }
 
             var file = new FileDescriptor(fileName, contentType, directoryPath);
-            var fileRepository = new FileRepository();
+
             try
             {
                 Console.WriteLine("Getting file {0} from cloud storage", file.Name);
-                var url = await fileRepository.GetFileUrl(file);
+                var url = await FileRepository.GetFileUrl(file);
                 Console.WriteLine("Redirecting to URL: {0}", url);
                 return Redirect(url);
             }

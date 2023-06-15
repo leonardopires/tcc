@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ludikore.Revoicer.Services.AWS;
 using Ludikore.Revoicer.Services.Azure;
+using Microsoft.Extensions.Configuration;
 
 namespace Ludikore.Revoicer.Services.Cloud
 {
@@ -21,13 +22,18 @@ namespace Ludikore.Revoicer.Services.Cloud
         /// <value>The cloud provider.</value>
         public CloudProvider Provider { get; }
 
+        public CloudSettings CloudSettings { get; }
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="CloudProviderFactory"/> class.
+        /// Initializes a new instance of the <see cref="CloudProviderFactory" /> class.
         /// </summary>
         /// <param name="provider">The provider.</param>
-        public CloudProviderFactory(CloudProvider provider)
+        /// <param name="configuration"></param>
+        /// <param name="cloudSettings">The settings.</param>
+        public CloudProviderFactory(CloudProvider provider, IConfiguration configuration)
         {
             Provider = provider;
+            CloudSettings = new CloudSettings(configuration);
         }
 
         /// <summary>

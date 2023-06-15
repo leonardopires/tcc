@@ -12,14 +12,18 @@ namespace Ludikore.Revoicer.API.BackgroundServices
     public class SplitterListenerService : QueueListenerService<RevoicerJob>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SplitterListenerService"/> class.
+        /// Initializes a new instance of the <see cref="SplitterListenerService" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="context">The context.</param>
-        public SplitterListenerService(ILogger<QueueListenerService<RevoicerJob>> logger, IHubContext<RevoicerHub> context)
-            : base("revoicer-demucs-output.fifo", "SplitComplete", logger, context)
+        /// <param name="configuration">The configuration.</param>
+        public SplitterListenerService(
+            ILogger<QueueListenerService<RevoicerJob>> logger,
+            IHubContext<RevoicerHub> context,
+            IConfiguration configuration
+        )
+            : base("revoicer-demucs-output.fifo", "SplitComplete", logger, context, configuration)
         {
-
         }
     }
 }
