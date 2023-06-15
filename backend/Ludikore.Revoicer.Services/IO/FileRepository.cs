@@ -67,7 +67,7 @@ namespace Ludikore.Revoicer.Services.IO
         /// </summary>
         /// <param name="name">The name.</param>
         /// <param name="contentType">The MIME Content-Type.</param>
-        /// <param name="contents">The contents.</param>
+        /// <param name="contents">A stream containing the contents of the file.</param>
         /// <returns>IFileDescriptor.</returns>
         public async Task<IFileDescriptor> CreateFile(string name, string contentType, Stream contents)
         {
