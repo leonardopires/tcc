@@ -1,3 +1,0 @@
-[submodule "models/marcoc2"]
-	path = models/marcoc2
-	url = https://huggingface.co/marcoc2/so-vits-svc-4.0-models
