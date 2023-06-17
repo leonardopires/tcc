@@ -6,4 +6,4 @@ echo "**************************************************************************
 echo "Bootstrap script loading..."
 echo "Executing python module: ${REVOICER_MODULE}..."
 echo ""
-python3 -m "${REVOICER_MODULE}"
+nohup python3 -m "${REVOICER_MODULE}"
