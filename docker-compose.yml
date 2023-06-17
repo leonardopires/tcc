@@ -27,13 +27,16 @@ services:
   web:
     build:
       context: ./web    
-      
+    environment:
+      - NODE_ENV=development
+      - REVOICER_WHATEVER=1
     depends_on:
       - demucs
       - svc
     volumes:
-      - ./frontend/:/app
+      - ./web/:/app
       - ./data:/data
+      - ./backend:/backend
     
   
 

@@ -65,10 +65,14 @@ services:
       - REVOICER_AWS_ENDPOINT=http://localstack:4566
       - AWS_ACCESS_KEY_ID=AKIA2WKJWLHNGDV7FA6A
       - AWS_SECRET_ACCESS_KEY=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
+      - SSL_CRT_FILE=/root/.aspnet/https/frontend.pem
+      - SSL_KEY_FILE=/root/.aspnet/https/frontend.key
 
     ports:
       - "8080:80"
       - "8443:443"
+      - "3000:3000"
+      - "1022:22"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
