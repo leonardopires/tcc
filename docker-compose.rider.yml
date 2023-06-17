@@ -24,5 +24,6 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\TokenService.Proxy\linux-x64\net6.0:/TokenService.Proxy:ro
 
-    entrypoint: bash -c "(echo \"Starting...\" >> /data/web.log) && tail -f /data/web.log"
+    working_dir: /app/web/ClientApp
+    entrypoint: npm start
     tty: true

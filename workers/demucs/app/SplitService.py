@@ -12,7 +12,7 @@ TWorkItem = FileInfo | str
 
 INPUT_QUEUE_NAME = os.environ["REVOICER_INPUT_QUEUE_NAME"]
 OUTPUT_QUEUE_NAME = os.environ["REVOICER_OUTPUT_QUEUE_NAME"]
-DEMUCS_MODEL = os.environ["REVOICER_DEMUCS_MODEL"]
+DEMUCS_MODEL = "htdemucs"
 DEMUCS_SHIFTS = os.environ["REVOICER_DEMUCS_SHIFTS"]
 
 
@@ -70,7 +70,7 @@ class SplitService(RevoicerBaseService):
         result = []
 
         output_path_format = job.OperationId + "/{stem}.{ext}"
-        process = await asyncio.create_subprocess_exec(
+        args = [
             "demucs",
             "-d=cuda",
             f"--name={self.model}",
@@ -79,7 +79,10 @@ class SplitService(RevoicerBaseService):
             '--filename',
             output_path_format,
             work_item.LocalPath,
-        )
+        ]
+
+        print(f"Running demucs with args: {args}")
+        process = await asyncio.create_subprocess_exec(*args)
         return_code = await process.wait()
 
         if return_code != 0:

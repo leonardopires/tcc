@@ -77,7 +77,6 @@ class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
                 queue_message = QueueMessage(body, message)
 
                 yield queue_message
-                await receiver.complete_message(message)
 
     async def complete(self, queue_name: str, message: QueueMessage[T, ServiceBusMessage]):
         """
@@ -91,4 +90,7 @@ class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
         :param ServiceBusMessage]: Specify the type of message that is being received
         :return: A boolean value
         """
-    pass
+
+        receiver = self.client.get_queue_receiver(queue_name)
+        await receiver.complete_message(message.native_message)
+
