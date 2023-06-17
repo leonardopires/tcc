@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   
-  demucs:    
+  demucs:
     environment:
       - REVOICER_AZURE_SB_ACCESS_KEY_NAME=Revoicer
       - REVOICER_AZURE_SB_ACCESS_KEY_VALUE=Q39eKIIGssZFxwtHwy0fnt34SAhM5yzJd+ASbO2XqBo=
@@ -16,12 +16,11 @@ services:
       - REVOICER_DEMUCS_SHIFTS=2
 
     deploy:
-      replicas: 3
-      resources:        
-        limits:          
+      resources:
+        limits:
           cpus: '6'
           memory: 4G
-        reservations:          
+        reservations:
           devices:
             - driver: nvidia
               capabilities: [gpu]
@@ -39,7 +38,6 @@ services:
       - REVOICER_OUTPUT_QUEUE_NAME=revoicer-svc-output.prod
 
     deploy:
-      replicas: 3
       resources:
         limits:
           cpus: '6'

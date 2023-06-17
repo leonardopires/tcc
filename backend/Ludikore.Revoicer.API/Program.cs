@@ -1,13 +1,11 @@
-using Ludikore.Revoicer.Web.Hubs;
+using Ludikore.Revoicer.API.BackgroundServices;
+using Ludikore.Revoicer.API.Hubs;
 using Ludikore.Revoicer.Services;
-using Ludikore.Revoicer.Services.Application;
-using Ludikore.Revoicer.Services.Azure;
 using Ludikore.Revoicer.Services.Cloud;
 using Ludikore.Revoicer.Services.IO;
-using Ludikore.Revoicer.Web.BackgroundServices;
-using Microsoft.Extensions.FileProviders;
-using System.Net;
-using Microsoft.Build.Execution;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,30 +22,12 @@ builder.Services.AddEndpointsApiExplorer()
     .AddSignalR(options => { options.EnableDetailedErrors = true; });
 
 builder.Services.AddLogging();
-builder.Services.AddSingleton<CloudSettings>();
-
-builder.Services.AddTransient<CloudQueueService, ServiceBusService>();
-builder.Services.AddTransient<CloudStorageService, BlobStorageService>();
-
 builder.Services.AddHostedService<RevoicerListenerService>();
 builder.Services.AddHostedService<SplitterListenerService>();
-
 builder.Services.AddScoped<FileRepository>();
 builder.Services.AddScoped<SplitterService>();
 builder.Services.AddScoped<RevoicerService>();
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.Configure<ForwardedHeadersOptions>(options =>
-    {
-        options.ForwardLimit = 2;
-        options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
-        options.ForwardedForHeaderName = "X-Forwarded-For-My-Custom-Header-Name";
-    });
-}
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -57,8 +37,6 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseWebSockets();
-app.UseStaticFiles();
-
 
 // app.UseAuthentication();
 // app.UseAuthorization();
@@ -72,12 +50,5 @@ app.UseCors(
 
 app.MapControllers();
 app.MapHub<RevoicerHub>("/api/revoicer");
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-app.MapRazorPages();
-
-app.MapFallbackToFile("index.html"); ;
 
 app.Run();
