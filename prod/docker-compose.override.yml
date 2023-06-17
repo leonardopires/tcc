@@ -23,8 +23,8 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              capabilities: [gpu]
-    
+              capabilities: [ gpu ]
+
 
   svc:
     environment:
@@ -45,4 +45,4 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              capabilities: [gpu]
+              capabilities: [ gpu ]

@@ -670,4 +670,5 @@ FodyWeavers.xsd
 */Ludikore.Revoicer/data/
 
 data/
-models/quickwick
+models/
+models/
