@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Ludikore.Revoicer.Web.Hubs;
 using Ludikore.Revoicer.Services;
 using Ludikore.Revoicer.Services.Application;
@@ -9,17 +8,12 @@ using Ludikore.Revoicer.Web.BackgroundServices;
 using Microsoft.Extensions.FileProviders;
 using System.Net;
 using AspNetCore.Proxy;
-using Ludikore.Revoicer.Web.Extensions;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Build.Execution;
-using Microsoft.Extensions.Azure;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration
-  .AddEnvironmentVariables("REVOICER_")
-  .AddJsonFile("appsettings.json");
+builder.Configuration.AddEnvironmentVariables("REVOICER_").AddJsonFile("appsettings.json");
 
 // Add services to the container.
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -31,10 +25,7 @@ builder.Services.AddEndpointsApiExplorer()
   .AddCors()
   .AddSignalR(options => { options.EnableDetailedErrors = true; });
 
-builder.Services.AddSerilog(logConfig =>
-{
-  logConfig.WriteTo.Console().WriteTo.File("/data/web.log");
-});
+builder.Services.AddLogging();
 builder.Services.AddSingleton<CloudSettings>();
 
 builder.Services.AddTransient<CloudQueueService, ServiceBusService>();
@@ -47,7 +38,6 @@ builder.Services.AddScoped<FileRepository>();
 builder.Services.AddScoped<SplitterService>();
 builder.Services.AddScoped<RevoicerService>();
 
-
 if (builder.Environment.IsDevelopment())
 {
   builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -56,30 +46,23 @@ if (builder.Environment.IsDevelopment())
     options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
     options.ForwardedForHeaderName = "X-Forwarded-For-My-Custom-Header-Name";
   });
-  builder.Services.AddSpaStaticFiles(config =>
-  {
-    config.RootPath = "./ClientApp/build";
-  });
 }
 
-builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
-var tasks = new List<Task>();
-
 
 if (app.Environment.IsDevelopment())
 {
-  tasks.Add(app.UseReactDevServer(3000));
-}
-else
-{
-  app.UseSpaStaticFiles();
-}
+  app.UseSpa(spa =>
+  {
+    spa.Options.SourcePath = "./ClientApp";
+    spa.UseReactDevelopmentServer(npmScript: "start");
+    spa.UseProxyToSpaDevelopmentServer("https://localhost:44450");
+  });
 
-app.UseStaticFiles();
+}
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
@@ -87,6 +70,7 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseWebSockets();
+app.UseStaticFiles();
 
 
 // app.UseAuthentication();
@@ -108,7 +92,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.MapFallbackToFile("index.html");
+;
 
-
-tasks.Add(app.RunAsync());
-await Task.WhenAll(tasks);
+app.Run();

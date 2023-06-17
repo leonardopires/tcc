@@ -7,8 +7,6 @@
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>ludikore.revoicer.api</DockerServiceName>
-    <Configurations>Debug</Configurations>
-    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
@@ -21,14 +19,5 @@
     </None>
     <None Include="prod\docker-compose.yml" />
     <None Include="prod\run.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="docker-compose.rider.yml">
-      <DependentUpon>docker-compose.yml</DependentUpon>
-    </Content>
-    <Content Include="docker-compose.vs.debug.g.yml">
-      <DependentUpon>docker-compose.yml</DependentUpon>
-    </Content>
-    <Content Include="dotnet-watch.ps1" />
   </ItemGroup>
 </Project>
