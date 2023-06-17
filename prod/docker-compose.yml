@@ -11,7 +11,7 @@ services:
     environment:
       - REVOICER_MODULE=workers.demucs
     volumes:
-      - ../tmp/demucs/__pycache__:/app/workers/__pycache__
+      - ../data/tmp/demucs/__pycache__:/app/workers/__pycache__
       - ../workers:/app/workers:ro
       - ../data:/data
 
@@ -23,7 +23,7 @@ services:
     environment:
       - REVOICER_MODULE=workers.svc
     volumes:
-      - ../tmp/svc/__pycache__:/app/workers/__pycache__
+      - ../data/tmp/svc/__pycache__:/app/workers/__pycache__
       - ../workers:/app/workers
       - ../data:/data
       - ../models:/models
