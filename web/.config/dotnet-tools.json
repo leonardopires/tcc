@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "microsoft.dotnet-msidentity": {
+      "version": "2.0.1",
+      "commands": [
+        "dotnet-msidentity"
+      ]
+    },
+    "swashbuckle.aspnetcore.cli": {
+      "version": "6.2.3",
+      "commands": [
+        "swagger"
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "web",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "serviceActions": {
+        "demucs": "StartWithoutDebugging",
+        "svc": "StartWithoutDebugging",
+        "web": "StartDebugging"
+      }
+    },
+    "Prod": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "demucs": "StartWithoutDebugging",
+        "svc": "StartWithoutDebugging",
+        "web": "DoNotStart"
+      }
+    }
+  }
+}
