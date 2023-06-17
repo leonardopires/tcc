@@ -3,6 +3,7 @@ using Ludikore.Revoicer.Services;
 using Ludikore.Revoicer.Services.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Serilog;
 
 namespace Ludikore.Revoicer.Web.Controllers
 {
@@ -19,9 +20,11 @@ namespace Ludikore.Revoicer.Web.Controllers
         /// Initializes a new instance of the <see cref="FileManagerController"/> class.
         /// </summary>
         /// <param name="fileRepository">The file repository.</param>
-        public FileManagerController(FileRepository fileRepository)
+        /// <param name="logger">The logger instance.</param>
+        public FileManagerController(FileRepository fileRepository, ILogger<FileManagerController> logger)
         {
             FileRepository = fileRepository;
+            Logger = logger;
         }
 
         /// <summary>
@@ -29,6 +32,11 @@ namespace Ludikore.Revoicer.Web.Controllers
         /// </summary>
         /// <value>The file repository.</value>
         private FileRepository FileRepository { get; }
+
+        /// <summary>
+        /// Gets the logger instance.
+        /// </summary>
+        private ILogger<FileManagerController> Logger { get; }
 
         /// <summary>
         /// Allows the user to upload files into our cloud storage.
@@ -44,7 +52,7 @@ namespace Ludikore.Revoicer.Web.Controllers
                 await using var contents = formFile.OpenReadStream();
                 var fileDescriptor = await FileRepository.CreateFile(formFile.Name, formFile.ContentType, contents);
 
-                Console.WriteLine($"File created: {fileDescriptor.FilePath}");
+                Logger.LogInformation("File created: {FileDescriptorFilePath}", fileDescriptor.FilePath);
 
                 var filePath = fileDescriptor.FilePath.StartsWith("/")
                     ? fileDescriptor.FilePath.Substring(1)
@@ -68,58 +76,21 @@ namespace Ludikore.Revoicer.Web.Controllers
             return result;
         }
 
-        /// <summary>
-        /// Retrieves a file from the cloud storage and sends it as a download.
-        /// </summary>
-        /// <remarks>This is a fallback method and should be used carefully (since it's slower and consumes more bandwidth from the servers).</remarks>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>FileContentResult.</returns>
-        [HttpGet("download")]
-        public async Task<FileContentResult> DownloadFile([FromQuery] string filePath)
-        {
-            var directoryPath = Path.GetDirectoryName(filePath);
-
-            if (directoryPath == null)
-            {
-                throw new IOException($"Could not obtain a directory from path: {filePath}");
-            }
-
-            var fileName = Path.GetFileName(filePath);
-
-            var file = new FileDescriptor(fileName, "audio/wav", directoryPath);
-            try
-            {
-                Console.WriteLine("Getting file from cloud storage");
-                await using var stream = (MemoryStream)await FileRepository.GetFile(file);
-                Console.WriteLine("Creating response");
-                return new FileContentResult(stream.ToArray(), "application/octet-stream")
-                {
-                    FileDownloadName = file.Name,
-                };
-            }
-            finally
-            {
-                Console.WriteLine("Response sent");
-            }
-        }
 
         /// <summary>
         /// Retrieves a publicly visible URL to a file at the cloud storage provider and redirects to it.
         /// </summary>
-        /// <remarks>
-        /// It is preferable to use this rather than the <see cref="DownloadFile"/> action.
-        /// </remarks>
         /// <param name="filePath">The file path.</param>
-        /// <returns>RedirectResult.</returns>
+        /// <returns><see cref="ActionResult"/></returns>
         /// <exception cref="System.IO.IOException">Could not obtain a directory from path: {filePath}</exception>
         [HttpGet("redirect")]
-        public async Task<RedirectResult> RedirectToFile([FromQuery] string filePath)
+        public async Task<ActionResult> RedirectToFile([FromQuery] string filePath)
         {
             var directoryPath = Path.GetDirectoryName(filePath);
 
             if (directoryPath == null)
             {
-                throw new IOException($"Could not obtain a directory from path: {filePath}");
+                return new NotFoundObjectResult($"Could not obtain a directory from path: {filePath}");
             }
 
             var fileName = Path.GetFileName(filePath);
@@ -136,14 +107,14 @@ namespace Ludikore.Revoicer.Web.Controllers
 
             try
             {
-                Console.WriteLine("Getting file {0} from cloud storage", file.Name);
+                Logger.LogInformation("Getting file {FileName} from cloud storage", file.Name);
                 var url = await FileRepository.GetFileUrl(file);
-                Console.WriteLine("Redirecting to URL: {0}", url);
+                Logger.LogInformation("Redirecting to URL: {Url}", url);
                 return Redirect(url);
             }
             finally
             {
-                Console.WriteLine("Response sent");
+                Logger.LogInformation("Response sent");
             }
         }
     }

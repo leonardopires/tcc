@@ -20,4 +20,14 @@
     <None Include="prod\docker-compose.yml" />
     <None Include="prod\run.cmd" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="docker-compose.rider.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </Content>
+    <Content Include="docker-compose.vs.debug.g.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </Content>
+    <Content Include="dotnet-watch.ps1" />
+    <Content Include="global.json" />
+  </ItemGroup>
 </Project>

@@ -17,6 +17,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "web", "web\web.csproj", "{70819EB0-8D85-4001-9A89-2300AE9C66EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ludikore.Revoicer.Functions", "Ludikore.Revoicer.Functions\Ludikore.Revoicer.Functions.csproj", "{3EC671FE-1BD0-43E2-9114-CF7DA2226CD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{70819EB0-8D85-4001-9A89-2300AE9C66EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70819EB0-8D85-4001-9A89-2300AE9C66EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70819EB0-8D85-4001-9A89-2300AE9C66EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EC671FE-1BD0-43E2-9114-CF7DA2226CD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EC671FE-1BD0-43E2-9114-CF7DA2226CD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EC671FE-1BD0-43E2-9114-CF7DA2226CD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EC671FE-1BD0-43E2-9114-CF7DA2226CD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
