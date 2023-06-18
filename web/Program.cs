@@ -5,13 +5,17 @@ using Ludikore.Revoicer.Services.Cloud;
 using Ludikore.Revoicer.Services.IO;
 using Ludikore.Revoicer.Web.BackgroundServices;
 using System.Net;
+using System.Text.RegularExpressions;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configSuffix = builder.Environment.IsDevelopment() ? ".Development" : string.Empty;
+
 builder.Configuration
   .AddEnvironmentVariables("REVOICER_")
-  .AddJsonFile("appsettings.json");
+  .AddJsonFile($"appsettings{configSuffix}.json");
+
 
 // Add services to the container.
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -23,6 +27,7 @@ builder.Services.AddEndpointsApiExplorer()
   .AddCors()
   .AddSignalR(options => { options.EnableDetailedErrors = true; });
 
+builder.Services.AddLogging();
 builder.Services.AddSerilog(logConfig => { logConfig.WriteTo.Console().WriteTo.File("/data/web.log"); });
 builder.Services.AddSingleton<CloudSettings>();
 
@@ -38,16 +43,11 @@ builder.Services.AddScoped<RevoicerService>();
 
 if (builder.Environment.IsDevelopment())
 {
-  builder.Services.Configure<ForwardedHeadersOptions>(options =>
-  {
-    options.ForwardLimit = 2;
-    options.KnownProxies.Add(IPAddress.Parse("127.0.10.1"));
-    options.ForwardedForHeaderName = "X-Forwarded-For-My-Custom-Header-Name";
-  });
-}
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+}
+//
+// builder.Services.AddControllersWithViews();
+// builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -55,7 +55,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseWebSockets();
 app.UseStaticFiles();
 
@@ -67,17 +67,22 @@ app.UseCors(
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()
-    .SetIsOriginAllowed(host => true)
+    .SetIsOriginAllowed(host =>
+    {
+      var isMatch = new Regex(@"://localhost|://revoicer\.azurewebsites\.net").IsMatch(host);
+      app.Logger.LogInformation("Host: {host} : {isMatch}", host, isMatch);
+      return isMatch;
+    })
 );
 
 app.MapControllers();
 app.MapHub<RevoicerHub>("/api/revoicer");
-
-app.MapControllerRoute(
-  name: "default",
-  pattern: "{controller}/{action=Index}/{id?}");
-app.MapRazorPages();
-
+//
+// app.MapControllerRoute(
+//   name: "default",
+//   pattern: "{controller}/{action=Index}/{id?}");
+// app.MapRazorPages();
+//
 app.MapFallbackToFile("index.html");
 
 

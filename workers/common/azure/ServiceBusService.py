@@ -2,17 +2,18 @@ import json
 from typing import TypeVar, AsyncIterator
 
 import marshmallow_dataclass
-from azure.servicebus import ServiceBusMessage
-from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus import ServiceBusMessage, ServiceBusReceivedMessage
+from azure.servicebus.aio import ServiceBusClient, ServiceBusReceiver
 from cancel_token import CancellationToken
 
 from workers.common.cloud.CloudQueueService import CloudQueueService
 from workers.common.cloud.QueueMessage import QueueMessage
 
-T = TypeVar("T")
+TBody = TypeVar("TBody")
+TMessage = ServiceBusReceivedMessage
 
 
-class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
+class ServiceBusService(CloudQueueService[TBody, TMessage]):
     client: ServiceBusClient
 
     def __init__(self, connection_string: str) -> None:
@@ -29,7 +30,8 @@ class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
         print(f"Cnnecting to ServiceBus: {connection_string}")
         self.client = ServiceBusClient.from_connection_string(connection_string)
 
-    async def send_message(self, queue_name: str, message: QueueMessage[T, ServiceBusMessage]) -> QueueMessage[T, ServiceBusMessage]:
+    async def send_message(self, queue_name: str, message: QueueMessage[TBody, TMessage]) \
+            -> QueueMessage[TBody, TMessage]:
         """
         The send_message function sends a message to the queue.
 
@@ -51,9 +53,8 @@ class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
 
         return message
 
-    async def wait_for_message(
-            self, queue_name: str, object_type: type[T], token: CancellationToken
-    ) -> AsyncIterator[QueueMessage[T, ServiceBusMessage]]:
+    async def wait_for_message(self, queue_name: str, object_type: type[TBody], token: CancellationToken) \
+            -> AsyncIterator[QueueMessage[TBody, TMessage]]:
 
         """
         The wait_for_message function is a generator that yields messages from the queue.
@@ -74,11 +75,10 @@ class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
                 print(f"Message received: {str(message)}")
 
                 body = schema.loads(json_data=str(message))
-                queue_message = QueueMessage(body, message)
-
+                queue_message = QueueMessage(body, message, receiver)
                 yield queue_message
 
-    async def complete(self, queue_name: str, message: QueueMessage[T, ServiceBusMessage]):
+    async def complete(self, queue_name: str, message: QueueMessage[TBody, TMessage]):
         """
         The complete function is called when a message has been successfully processed.
         It can be used to delete the message from the queue, or to complete it in some other way.
@@ -86,11 +86,13 @@ class ServiceBusService(CloudQueueService[T, ServiceBusMessage]):
 
         :param self: Access the properties and methods of the class
         :param queue_name: str: Identify the queue that the message is being completed from
-        :param message: QueueMessage[T: Pass the message to the complete function
-        :param ServiceBusMessage]: Specify the type of message that is being received
+        :param message: QueueMessage[T: Pass the message to the complete function, ServiceBusReceivedMessage: Specify
+        the type of message that is being received]
         :return: A boolean value
         """
 
-        receiver = self.client.get_queue_receiver(queue_name)
+        print(f"Deleting the message {message.native_message.message_id} from the queue {queue_name}")
+        receiver: ServiceBusReceiver = message.receiver
         await receiver.complete_message(message.native_message)
+        print(f"Done deleting message {message.native_message.message_id} from queue {queue_name}")
 

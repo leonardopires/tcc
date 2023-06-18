@@ -69,10 +69,9 @@ services:
       - SSL_KEY_FILE=/root/.aspnet/https/frontend.key
 
     ports:
-      - "8080:80"
-      - "8443:443"
-      - "3000:3000"
-      - "1022:22"
+      - "7080:80"
+      - "7443:443"
+      - "7022:22"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

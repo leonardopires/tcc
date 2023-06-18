@@ -7,13 +7,83 @@
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>ludikore.revoicer.api</DockerServiceName>
+    <DockerComposeProjectName>revoicer</DockerComposeProjectName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
+    <None Include="docker-compose.vs.debug.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
+    <None Include="docker-compose.vs.release.yml">
+      <DependentUpon>docker-compose.yml</DependentUpon>
+    </None>
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
+    <None Include="frontend\src\AppConfig.ts" />
+    <None Include="frontend\src\app\App.css" />
+    <None Include="frontend\src\app\App.test.tsx" />
+    <None Include="frontend\src\app\App.tsx" />
+    <None Include="frontend\src\app\hooks.ts" />
+    <None Include="frontend\src\app\store.ts" />
+    <None Include="frontend\src\features\player\playerSlice.ts" />
+    <None Include="frontend\src\features\player\setPlayingState.ts" />
+    <None Include="frontend\src\features\player\setTrackVolume.ts" />
+    <None Include="frontend\src\features\player\togglePlayingState.ts" />
+    <None Include="frontend\src\features\revoicer\changeFiles.ts" />
+    <None Include="frontend\src\features\revoicer\IRevoiceJob.ts" />
+    <None Include="frontend\src\features\revoicer\IRevoicerState.ts" />
+    <None Include="frontend\src\features\revoicer\ITrack.ts" />
+    <None Include="frontend\src\features\revoicer\IVoice.ts" />
+    <None Include="frontend\src\features\revoicer\revoicerSlice.ts" />
+    <None Include="frontend\src\features\revoicer\revoicerStatus.ts" />
+    <None Include="frontend\src\features\revoicer\TrackType.ts" />
+    <None Include="frontend\src\features\revoicer\uploadAndSplit.ts" />
+    <None Include="frontend\src\features\splitter\filesChanged.ts" />
+    <None Include="frontend\src\features\splitter\revoiceSongs.ts" />
+    <None Include="frontend\src\features\splitter\splitSongs.ts" />
+    <None Include="frontend\src\features\splitter\updateFile.ts" />
+    <None Include="frontend\src\index.css" />
+    <None Include="frontend\src\index.tsx" />
+    <None Include="frontend\src\services\FileService.ts" />
+    <None Include="frontend\src\services\LastFMService.ts" />
+    <None Include="frontend\src\services\PlayerService.ts" />
+    <None Include="frontend\src\services\RevoicerService.ts" />
+    <None Include="frontend\src\services\SpotifyService.ts" />
+    <None Include="frontend\src\services\UploadService.ts" />
+    <None Include="frontend\src\services\UrlService.ts" />
+    <None Include="frontend\src\ui\atoms\DeleteIcon\deleteIcon.svg" />
+    <None Include="frontend\src\ui\atoms\DeleteIcon\DeleteIcon.tsx" />
+    <None Include="frontend\src\ui\atoms\LogoText.tsx" />
+    <None Include="frontend\src\ui\atoms\Logo\logo.svg" />
+    <None Include="frontend\src\ui\atoms\Logo\Logo.tsx" />
+    <None Include="frontend\src\ui\atoms\PauseIcon\PauseIcon.tsx" />
+    <None Include="frontend\src\ui\atoms\PlayIcon\playIcon.svg" />
+    <None Include="frontend\src\ui\atoms\PlayIcon\PlayIcon.tsx" />
+    <None Include="frontend\src\ui\atoms\PlayingProgress\playingProgress.svg" />
+    <None Include="frontend\src\ui\atoms\PlayingProgress\PlayingProgress.tsx" />
+    <None Include="frontend\src\ui\atoms\PlayingTime\PlayingTime.tsx" />
+    <None Include="frontend\src\ui\atoms\TrackStatus\TrackStatus.tsx" />
+    <None Include="frontend\src\ui\atoms\TrackStatus\trackStatusOff.svg" />
+    <None Include="frontend\src\ui\atoms\TrackStatus\trackStatusOn.svg" />
+    <None Include="frontend\src\ui\atoms\UploadIcon\uploadIcon.svg" />
+    <None Include="frontend\src\ui\atoms\UploadIcon\UploadIcon.tsx" />
+    <None Include="frontend\src\ui\molecules\AppToolbar\AppToolbar.tsx" />
+    <None Include="frontend\src\ui\molecules\FileSelector\FileSelector.tsx" />
+    <None Include="frontend\src\ui\molecules\FileSelector\index.tsx" />
+    <None Include="frontend\src\ui\molecules\FileSelector\placeholderImage.svg" />
+    <None Include="frontend\src\ui\molecules\MuteButton\MuteButton.tsx" />
+    <None Include="frontend\src\ui\molecules\PlayButton\PlayButton.tsx" />
+    <None Include="frontend\src\ui\molecules\TrackList\index.tsx" />
+    <None Include="frontend\src\ui\molecules\TrackList\TrackList.tsx" />
+    <None Include="frontend\src\ui\molecules\Track\GetTrackInfo.tsx" />
+    <None Include="frontend\src\ui\molecules\Track\Track.tsx" />
+    <None Include="frontend\src\ui\molecules\Track\TrackVolumeSlider.tsx" />
+    <None Include="frontend\src\ui\organisms\MultiTrackPage.tsx" />
+    <None Include="frontend\src\ui\organisms\Player.tsx" />
+    <None Include="frontend\src\ui\organisms\UploadPage.tsx" />
+    <None Include="frontend\src\ui\theme\revoicerTheme.ts" />
     <None Include="prod\docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
@@ -29,5 +99,8 @@
     </Content>
     <Content Include="dotnet-watch.ps1" />
     <Content Include="global.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="frontend\**" />
   </ItemGroup>
 </Project>

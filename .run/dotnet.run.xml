@@ -1,0 +1,6 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="dotnet" type="PowerShellRunType" factoryName="PowerShell" scriptUrl="D:\git\revoicer-dev\dotnet-watch.ps1" workingDirectory="d:\git\revoicer-dev\" executablePath="C:/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe">
+    <envs />
+    <method v="2" />
+  </configuration>
+</component>

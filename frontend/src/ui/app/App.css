@@ -1,0 +1,101 @@
+.App {
+    text-align: center;
+}
+
+html {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+
+body {
+    background: radial-gradient(63.8% 59.2% at 26.72% 36.74%, #F8DA3F 0%, #C69C10 100%) fixed;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+
+section {
+    height: 100%;
+}
+
+.overlay {
+    background: url(./background-home.png) no-repeat right top;
+    background-size: cover;
+    background-blend-mode: soft-light;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    float: left;
+    z-index: -9;
+    filter: saturate(110%) brightness(100%) contrast(140%);
+}
+
+.overlay2 {
+    background: radial-gradient(63.8% 59.2% at 26.72% 36.74%, #f8e586 0%, #C69C1099 100%) fixed;
+    background-blend-mode: overlay, normal;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    float: left;
+    z-index: -9;
+    filter: saturate(120%) brightness(90%) contrast(110%);
+}
+
+.wrapper {
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.page-header,
+.page-footer {
+    padding: 20px;
+}
+
+.page-body {
+    min-height: 100%;
+}
+
+main {
+    max-width: 800px;
+    min-height: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+.page-footer {
+
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+a {
+    color: #372b06;
+    font-weight: 700;
+}
+
+.rev-FileUpload-banner {
+    background: transparent !important;
+}
+
+.rev-FileUpload-banner > div {
+    flex-direction: row-reverse;
+}
