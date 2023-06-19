@@ -22,7 +22,7 @@ export function PlayingProgress({elapsed, duration, onSeek}: { elapsed: number, 
   return (
     <div
       style={{
-        position: "relative"
+        position: "relative",
       }}
       onMouseUp={(e) => {
         let clientRect = e.currentTarget.getClientRects()[0];

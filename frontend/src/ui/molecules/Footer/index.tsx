@@ -1,1 +1,1 @@
-export {Footer} from "./Footer.tsx"
+export {Footer} from "./Footer"

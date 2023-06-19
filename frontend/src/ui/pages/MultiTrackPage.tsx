@@ -9,6 +9,7 @@ import {AddCircleOutline} from "@mui/icons-material";
 import {Player, PlayerSize} from "../organisms/Player";
 import {TrackList} from "../molecules/TrackList";
 import {RevoicerStatus} from "../../features/revoicer/revoicerStatus";
+import {useNavigate} from "react-router-dom";
 
 /**
  * Renders the step of the revoicing process in which the user sees all the tracks from a song
@@ -25,6 +26,12 @@ export function MultiTrackPage() {
   const revoicedFiles = files.flatMap(file => file.revoiced);
 
   const voices = useAppSelector(state => state.revoicer.voices);
+
+  const navigate = useNavigate();
+
+  if ([...splitFiles, ...revoicedFiles].length === 0) {
+    navigate("/")
+  }
 
   return (
     <Box marginBottom={"20px"}>

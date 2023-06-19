@@ -27,7 +27,8 @@ export function TrackVolumeSlider(props: {
       step={1}
       size={"small"}
       style={{
-        color: "#58470a"
+        color: "#58470a",
+        marginLeft: "10px"
       }}
     >
     </Slider>

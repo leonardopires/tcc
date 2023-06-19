@@ -42,7 +42,6 @@ export function TrackList({files, voices}: { files: string[], voices: IVoice[] }
                 xs={8}
                 sm={6}
                 md={6}
-                lg={7}
                 paddingRight={"10px"}
                 paddingBottom={"5px"}
           >
@@ -63,7 +62,6 @@ export function TrackList({files, voices}: { files: string[], voices: IVoice[] }
                 xs={8}
                 sm={2}
                 md={2}
-                lg={1}
                 textAlign={"center"}
                 paddingRight={"10px"}
           >

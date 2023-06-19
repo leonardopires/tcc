@@ -62,9 +62,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <section>
         <RouterProvider router={router}/>
-      </section>
     </Provider>
   </React.StrictMode>
 );

@@ -1,6 +1,6 @@
 import placeHolderImage from "./placeholderImage.svg";
 import {revoicerTheme} from "../../theme/revoicerTheme";
-import {Grid, IconButton, Typography} from "@mui/material";
+import {Box, Grid, IconButton, Typography} from "@mui/material";
 import {UploadIcon} from "../../atoms/UploadIcon/UploadIcon";
 // @ts-ignore
 import FileUpload from "react-mui-fileuploader";
@@ -38,31 +38,33 @@ export function FileSelector(props: IFileSelectorProps) {
   }
 
   return files.length === 0 ? (
-    <FileUpload
-      id={id}
-      title={""}
-      header={""}
-      buttonLabel={"Selecionar Arquivos"}
-      buttonRemoveLabel={"Remover"}
-      rightLabel={""}
-      leftLabel={"Arraste aqui o arquivo que deseja enviar para o revoice ou clique no botão"}
-      onFilesChange={handleChange}
-      maxUploadFiles={1}
-      allowedExtensions={["mp3", "mpeg"]}
-      multiFile={false}
-      acceptedType={"audio/mp3"}
-      bannerProps={{
-        hidden: !canAdd,
-      }}
-      BannerProps={{className: "rev-FileUpload-banner", style: theme.custom.FileUploadBanner}}
-      ContainerProps={{style: theme.custom.FileUploadContainer}}
-      LabelsGridProps={{style: theme.custom.FileUploadLabels}}
-      PlaceholderGridProps={{style: theme.custom.FileUploadImage}}
-      imageSrc={placeHolderImage}
-      onError={(error: Error) => {
-        console.error(error);
-      }}
-    />
+    <Box sx={{p:0, mb:2}}>
+        <FileUpload
+          id={id}
+          title={""}
+          header={"Faça o upload"}
+          buttonLabel={"Selecionar Arquivos"}
+          buttonRemoveLabel={"Remover"}
+          rightLabel={""}
+          leftLabel={"Arraste aqui o arquivo que deseja enviar para o revoice ou clique no botão"}
+          onFilesChange={handleChange}
+          maxUploadFiles={1}
+          allowedExtensions={["mp3", "mpeg"]}
+          multiFile={false}
+          acceptedType={"audio/mp3"}
+          bannerProps={{
+            hidden: !canAdd,
+          }}
+          BannerProps={{className: "rev-FileUpload-banner", style: theme.custom.FileUploadBanner, sm: 10}}
+          ContainerProps={{style: theme.custom.FileUploadContainer, sm: 8}}
+          LabelsGridProps={{style: theme.custom.FileUploadLabels, sm: 8}}
+          PlaceholderGridProps={{style: theme.custom.FileUploadImage, sm: 2}}
+          imageSrc={placeHolderImage}
+          onError={(error: Error) => {
+            console.error(error);
+          }}
+        />
+    </Box>
   ) : (
     (showChangeFileMessage ? (
       <Grid container style={theme.custom.FileUploadContainer} columns={9}>

@@ -11,6 +11,7 @@ import {ITrack} from "../../../features/revoicer/ITrack";
 import {PlayerState, setPlayerTrack} from "../../../features/player/playerSlice";
 import {setPlayingState} from "../../../features/player/setPlayingState";
 import {TrackVolumeSlider} from "./TrackVolumeSlider";
+import {revoicerTheme} from "../../theme/revoicerTheme.ts";
 
 const {REVOICER_BASE_URL} = import.meta.env;
 const playerService = PlayerService.instance();
@@ -24,7 +25,9 @@ export function Track({track}: { track: ITrack }) {
   let itemStyle: CSSProperties = {};
 
   let nonButtonItemStyle: CSSProperties = {
-    paddingTop: "12px",
+    display: "block",
+    minHeight: "100%",
+    verticalAlign: "bottom"
   };
 
   let dispatch = useAppDispatch();
@@ -56,20 +59,23 @@ export function Track({track}: { track: ITrack }) {
         border: "1px solid #AB852D",
         borderRadius: "0.7em",
       }}>
-      <Grid container columns={20}>
-        <Grid item xs={1} style={{...itemStyle, ...nonButtonItemStyle}}>
-          <TrackStatus status={!muted}/>
+      <Grid container columns={20} columnSpacing={"5px"} rowSpacing={"10px"}>
+        <Grid item
+              xs={4}
+              sm={3}
+              style={{...itemStyle, ...nonButtonItemStyle}}
+              paddingY={"10px"}
+        >
+          <IconButton size={"small"}><TrackStatus status={!muted}/></IconButton>
+          <IconButton size={"small"}><FontAwesomeIcon icon={track.icon}/></IconButton>
         </Grid>
-        <Grid item xs={1} style={{...itemStyle, ...nonButtonItemStyle}}>
-          <FontAwesomeIcon icon={track.icon}/>
-        </Grid>
-        <Grid item xs={10} sm={12} md={14} style={{...itemStyle, ...nonButtonItemStyle}}>
+        <Grid item xs={16} sm={10} style={{...itemStyle, ...nonButtonItemStyle}}>
           <Typography
             variant={"h6"}
             overflow={"clip"}
             textOverflow={"ellipsis"}
             width={"100%"}
-            position={"relative"}
+            paddingY={"10px"}
           >{track.name === "Original" && songInfo?.artist ? `Original: ${songInfo.artist}` : track.name}</Typography>
 
           <ReactAudioPlayer
@@ -84,27 +90,29 @@ export function Track({track}: { track: ITrack }) {
             }}
           />
         </Grid>
-        <Grid item xs={3} sm={2} style={{...itemStyle, paddingTop: "5px"}}>
+        <Grid item xs={11} sm={3} style={{...itemStyle}}>
           <TrackVolumeSlider
             track={track}
           />
         </Grid>
         <Grid item
-              xs={2}
+              xs={5}
               sm={2}
-              md={1}
-              style={{...itemStyle, paddingLeft: "10px"}}
+              style={{...itemStyle}}
+              textAlign={"right"}
         >
           <IconButton
             href={`${REVOICER_BASE_URL}/api/FileManager/redirect?filePath=%2F${encodeURIComponent(track.filePath)}`}
-            target={"_blank"}>
+            target={"_blank"}
+            style={revoicerTheme().custom.mutedStyle}
+          >
             <Download/>
           </IconButton>
         </Grid>
         <Grid item
-              xs={1}
+              xs={2}
               style={itemStyle}
-              textAlign={"end"}
+              textAlign={"left"}
         >
           <MuteButton onClick={() => setMuted(!muted)} muted={!!muted}/>
         </Grid>

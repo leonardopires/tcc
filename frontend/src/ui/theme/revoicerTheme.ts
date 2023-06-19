@@ -1,4 +1,4 @@
-import {createTheme, PaletteColorOptions, Theme} from "@mui/material";
+import {createTheme, PaletteColorOptions, Theme, SxProps} from "@mui/material";
 import {amber, orange, yellow} from "@mui/material/colors";
 import React from "react";
 
@@ -8,10 +8,11 @@ export interface RevoicerTheme extends Theme {
     FileUploadContainer: React.CSSProperties,
     FileUploadLabels: React.CSSProperties,
     FileUploadImage: React.CSSProperties,
-    [indexer: string]: React.CSSProperties,
+    mutedStyle: React.CSSProperties,
+    [indexer: string]: React.CSSProperties | SxProps,
   };
 
-  getCustomOverride(type: string): React.CSSProperties;
+  getCustomOverride(type: string): React.CSSProperties | SxProps;
 };
 
 export function revoicerTheme(): RevoicerTheme {
@@ -25,7 +26,7 @@ export function revoicerTheme(): RevoicerTheme {
 
   let black: PaletteColorOptions = {
     main: "#1F1808",
-  }
+  };
 
   let muiTheme = createTheme({
     palette: {
@@ -38,14 +39,15 @@ export function revoicerTheme(): RevoicerTheme {
     },
     components: {
       MuiAppBar: {
-        defaultProps: {
-          position: "static",
-        },
         styleOverrides: {
           root: {
-            background: "transparent",
+            background: "#C69C10",
             boxShadow: "none",
-            alignItems: "center",
+            position: "fixed",
+            top: 0,
+            marginTop: 0,
+            paddingTop: 0,
+            color: "black",
           }
         }
       },
@@ -89,35 +91,39 @@ export function revoicerTheme(): RevoicerTheme {
       h2: {...title, fontSize: "2em"},
       h3: {...title, fontSize: "1.8em"},
       h4: {...title, fontSize: "1.4em", marginBottom: 0},
-      h5: { fontFamily: poppins, fontSize: "0.9em", fontWeight: 250, marginBottom: "0.5em"},
+      h5: {fontFamily: poppins, fontSize: "0.9em", fontWeight: 250, marginBottom: "0.5em"},
       h6: {...title, fontSize: "1em", marginBottom: 0, marginTop: "-0.2em"},
     },
   });
   let theme: RevoicerTheme = {
     ...muiTheme,
     custom: {
-      FileUploadBanner: {},
+      FileUploadBanner: {
+        margin: 0
+      },
       FileUploadContainer: {
         background: "rgba(89, 75, 22, 0.15)",
         borderColor: "#1F1808",
         borderWidth: "3px",
         borderStyle: "dashed",
         borderRadius: 0,
-        padding: "0.2em 3em",
-        marginBottom: "2em",
       },
       FileUploadLabels: {
         textAlign: "left",
-        marginTop: "-2em"
       },
-      FileUploadImage: {
-        marginLeft: "3em",
-        marginTop: "-1em"
+      FileUploadImage: {},
+      mutedStyle: {
+        border: "3px solid #9A7217",
+        borderRadius: "5px",
+        padding: "0 5px",
+        height: "40px",
+        width: "40px",
+        color: "black",
       },
     },
-    getCustomOverride(type: string): React.CSSProperties {
+    getCustomOverride(type: string): React.CSSProperties | SxProps {
       return this.custom[type];
-    }
+    },
   };
 
   return theme;

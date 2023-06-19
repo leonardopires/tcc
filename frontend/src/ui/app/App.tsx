@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import {revoicerTheme} from "../theme/revoicerTheme.ts";
 import {Outlet} from "react-router-dom";
