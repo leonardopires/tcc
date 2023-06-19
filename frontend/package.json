@@ -32,7 +32,7 @@
     "react-mui-fileuploader": "^0.5.2",
     "react-redux": "^8.1.0",
     "react-router-dom": "^6.13.0",
-    "sort-by": "^0.0.2",
+    "sort-by": "^0.0.2"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",
