@@ -27,12 +27,14 @@ services:
   web:
     build:
       context: ./web    
-      
+    
+    working_dir: /app/web
     depends_on:
       - demucs
       - svc
     volumes:
-      - ./frontend/:/app
+      - ./backend:/app/backend
+      - ./web/:/app/web
       - ./data:/data
     
   

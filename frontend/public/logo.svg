@@ -1,0 +1,28 @@
+<svg width="85" height="121" viewBox="-20 -0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+    <filter id="sofGlow" height="300%" width="300%" x="-75%" y="-75%">
+        <!-- Thicken out the original shape -->
+        <feMorphology operator="dilate" radius="3" in="SourceAlpha" result="thicken"/>
+
+        <!-- Use a gaussian blur to create the soft blurriness of the glow -->
+        <feGaussianBlur in="thicken" stdDeviation="3" result="blurred"/>
+
+        <!-- Change the colour -->
+        <feFlood flood-color="#808080" result="glowColor"/>
+
+        <!-- Color in the glows -->
+        <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored"/>
+
+        <!--	Layer the effects together -->
+        <feMerge>
+            <feMergeNode in="softGlow_colored"/>
+            <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+
+    </filter>
+
+    <path d="M60.5103 87.5702L60.7978 80L82.646 80.9582L82.9334 73.2922L61.0853 72.3339L61.3727 64.7637L83.2209 65.722L83.5084 58.056L61.6602 57.0977L61.9477 49.5275L83.7959 50.4857L84.0833 42.8197L62.2352 41.8614L62.5226 34.2912L84.3708 35.2495L84.4667 33.8121C85.2333 16.1803 67.6972 1.03985 45.3699 0.0815999H44.5075C22.1802 -0.876654 3.49423 12.7305 2.72763 30.3624L2.6318 31.7998L24.48 32.758L24.1925 40.3283L2.34433 39.37L2.05687 47.036L23.905 47.9943L23.6176 55.5645L1.76938 54.6062L1.48191 62.2723L23.3301 63.2305L23.0426 70.8007L1.19442 69.8425L0.906954 77.5085L22.7551 78.4667L22.4677 86.0369L0.619489 85.0787L0.523658 86.9952C-0.242945 104.627 17.2931 119.767 39.6204 120.726H40.4828C62.8101 121.684 81.4961 108.077 82.2627 90.4449L82.3585 88.5284L60.5103 87.5702Z"
+          fill="#1F1808"
+          filter="url(#sofGlow)"
+    />
+</svg>

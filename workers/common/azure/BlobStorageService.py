@@ -64,7 +64,7 @@ class BlobStorageService(CloudStorageService):
         print(f"Uploading file to storage: {file.LocalPath} into {file.RemotePath}")
 
         with open(file.LocalPath, "rb") as data:
-            await blob_client.upload_blob(data, blob_type="BlockBlob")
+            await blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
 
         print(f"Upload complete. Your file is at {file.RemotePath}.")
 

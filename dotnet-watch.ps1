@@ -8,5 +8,9 @@ docker-compose -f ./docker-compose.yml -f ./docker-compose.override.yml -f ./doc
 echo "Killing existing dotnet instances in the container..."
 docker-compose exec -t $containerName killall dotnet
 
+echo "Environment variables..."
+docker-compose exec -t $containerName /usr/bin/env
+
 echo "Building and running the application..."
-docker-compose exec -t -w=/app/web $containerName dotnet run -d --additionalProbingPath /root/.nuget/packages --additionalProbingPath /root/.nuget/fallbackpackages /app/web/bin/Debug/net7.0/web.dll
+docker-compose exec -t -w=/app/web $containerName dotnet -d  --no-launch-profile --no-restore --no-build /app/web/bin/Debug/net7.0/web
+

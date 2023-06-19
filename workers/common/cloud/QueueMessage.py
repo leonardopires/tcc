@@ -10,4 +10,5 @@ class QueueMessage(Generic[T, TMessage]):
 
     body: T
     native_message: TMessage
+    receiver: any
 

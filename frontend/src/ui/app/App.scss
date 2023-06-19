@@ -1,0 +1,100 @@
+.App {
+  text-align: center;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 20px 0;
+  margin: 0;
+}
+
+body {
+  background: radial-gradient(
+                  63.8% 59.2% at 26.72% 36.74%,
+                  #F8DA3F 0%,
+                  #C69C10 100%
+  ) fixed;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  touch-action: pan-y;
+}
+
+* {
+  box-sizing: inherit;
+}
+
+section {
+  height: 100%;
+  min-width: 100%;
+  max-width: 960px;
+  margin: auto 0 auto 0;
+}
+
+.overlay {
+  background: url(./background-home.png) no-repeat right top;
+  background-size: cover;
+  background-blend-mode: soft-light;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  filter: saturate(110%) brightness(100%) contrast(140%);
+}
+
+.overlay2 {
+  background: radial-gradient(
+                  63.8% 59.2% at 26.72% 36.74%,
+                  #f8e586 0%,
+                  #C69C1099 100%
+  ) fixed;
+  background-size: cover;
+  background-blend-mode: overlay, normal;
+  min-height: 100vh;
+  min-width: 100vw;
+  filter: saturate(120%) brightness(90%) contrast(110%);
+}
+
+.wrapper {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+footer {
+  padding: 20px;
+  background: #C69C10;
+  margin-bottom: 0;
+}
+
+main {
+  min-width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  padding: 60px 20px;
+  grid-template-rows: auto 1fr auto;
+}
+
+
+a {
+  color: #372b06;
+  font-weight: 700;
+}
+
+.rev-FileUpload-banner {
+  background: transparent !important;
+
+  > div {
+    @media only screen and (max-width: 800px) {
+      margin: -20px -20px;
+      padding: 10px 20px;
+    }
+    flex-direction: row-reverse;
+  }
+}
