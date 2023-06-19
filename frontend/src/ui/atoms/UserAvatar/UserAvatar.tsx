@@ -7,6 +7,7 @@ export function UserAvatar(props: { user?: IRevoicerUser }) {
   const {user} = props;
 
   return user ? (
+  // @ts-ignore
     <Avatar size={"small"} {...stringAvatar(user?.name)}/>
   ) : <LoginRounded/>;
 }
