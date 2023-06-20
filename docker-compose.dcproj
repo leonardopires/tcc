@@ -80,7 +80,7 @@
     <None Include="frontend\src\ui\molecules\Track\GetTrackInfo.tsx" />
     <None Include="frontend\src\ui\molecules\Track\Track.tsx" />
     <None Include="frontend\src\ui\molecules\Track\TrackVolumeSlider.tsx" />
-    <None Include="frontend\src\ui\organisms\MultiTrackPage.tsx" />
+    <None Include="frontend\src\ui\organisms\RevoicePage.tsx" />
     <None Include="frontend\src\ui\organisms\Player.tsx" />
     <None Include="frontend\src\ui\organisms\UploadPage.tsx" />
     <None Include="frontend\src\ui\theme\revoicerTheme.ts" />

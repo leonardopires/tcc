@@ -21,7 +21,7 @@ export function Footer() {
         </Disclaimer>
         <Disclaimer italic>
           Este site foi desenvolvido com fins acadêmicos para estudar a aplicação de inteligência artificial no campo da
-          música. O código fonte encontra-se no <a href={"https://github.com"} target={"_blank"}>GitHub</a>
+          música. O código fonte encontra-se no <a href={"https://github.com/leonardopires/tcc"} target={"_blank"}>GitHub</a>
         </Disclaimer>
       </Container>
     </footer>

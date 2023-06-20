@@ -15,7 +15,7 @@ import {library} from '@fortawesome/fontawesome-svg-core';
 import {fad} from '@fortawesome/pro-duotone-svg-icons';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {UploadPage} from "./ui/pages/UploadPage.tsx";
-import {MultiTrackPage} from "./ui/pages/MultiTrackPage.tsx";
+import {RevoicePage} from "./ui/pages/RevoicePage.tsx";
 import {HomePage} from "./ui/pages/HomePage.tsx";
 import {HomeLayout} from "./ui/layouts/HomeLayout.tsx";
 import {InternalLayout} from "./ui/layouts/InternalLayout.tsx";
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
               element: <UploadPage/>
             }, {
               path: "revoice",
-              element: <MultiTrackPage/>
+              element: <RevoicePage/>
             }
 
           ]

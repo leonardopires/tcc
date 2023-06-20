@@ -6,6 +6,7 @@ import {IRevoicerUser} from "../../../models/IRevoicerUser.ts";
 import {UserAvatar} from "../../atoms/UserAvatar/UserAvatar.tsx";
 import {MenuRounded} from "@mui/icons-material";
 import {useState} from "react";
+import {NavLink} from "react-router-dom";
 
 export function AppToolbar() {
   const [user] = useState<IRevoicerUser | undefined>(undefined);
@@ -30,8 +31,10 @@ export function AppToolbar() {
             </IconButton>
           </Grid>
           <Grid item xs={8} textAlign={"center"} paddingY={"5px"}>
-            <Logo/>
-            <LogoText/>
+            <NavLink to={"/"}>
+              <Logo/>
+              <LogoText/>
+            </NavLink>
           </Grid>
           <Grid item xs={1}>
             <RevoicerMenu

@@ -1,15 +1,10 @@
 import {useAppSelector} from "../app/hooks";
-import {
-  Box,
-  Button,
-  Grid,
-  Typography
-} from "@mui/material";
+import {Box, Button, Grid, Typography} from "@mui/material";
 import {AddCircleOutline} from "@mui/icons-material";
 import {Player, PlayerSize} from "../organisms/Player";
 import {TrackList} from "../molecules/TrackList";
 import {RevoicerStatus} from "../../features/revoicer/revoicerStatus";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 
 /**
  * Renders the step of the revoicing process in which the user sees all the tracks from a song
@@ -18,7 +13,7 @@ import {useNavigate} from "react-router-dom";
  * @param {boolean} props.condition - The condition determining whether to render the component.
  * @returns {JSX.Element} The rendered component.
  */
-export function MultiTrackPage() {
+export function RevoicePage() {
   const files = useAppSelector(state => state.revoicer.uploadedFiles);
   const status = useAppSelector(state => state.revoicer.status);
 
@@ -62,7 +57,7 @@ export function MultiTrackPage() {
           </Box>
         </>
       ) : (
-        <></>
+        <Navigate to={"/"} />
       )}
     </Box>
   );
