@@ -7,19 +7,23 @@ services:
     build:
       context: ../workers
       dockerfile: demucs/Dockerfile
+    working_dir: /app
     environment:
       - REVOICER_MODULE=workers.demucs
     volumes:
-      - ../workers:/app/workers
+      - ../data/tmp/demucs/__pycache__:/app/workers/__pycache__
+      - ../workers:/app/workers:ro
       - ../data:/data
 
   svc:
     build:
       context: ../workers
       dockerfile: svc/Dockerfile
+    working_dir: /app
     environment:
       - REVOICER_MODULE=workers.svc
     volumes:
+      - ../data/tmp/svc/__pycache__:/app/workers/__pycache__
       - ../workers:/app/workers
       - ../data:/data
       - ../models:/models

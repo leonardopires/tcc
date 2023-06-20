@@ -1,3 +1,4 @@
+#file: noinspection ComposeUnknownValues
 version: '3.4'
 
 services:
@@ -26,8 +27,9 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              capabilities: [gpu]
-    
+              capabilities: [ gpu ]
+      replicas: 3
+
 
   svc:
     environment:
@@ -48,4 +50,5 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              capabilities: [gpu]
+              capabilities: [ gpu ]
+      replicas: 3
