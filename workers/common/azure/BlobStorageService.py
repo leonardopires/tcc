@@ -38,10 +38,14 @@ class BlobStorageService(CloudStorageService):
         if not os.path.exists(dirname):
             os.makedirs(dirname)
 
-        with open(file.LocalPath, "wb") as output_file:
-            blob = await blob_client.download_blob()
-            contents = await blob.readall()
-            output_file.write(contents)
+        try:
+            with open(file.LocalPath, "wb") as output_file:
+                blob = await blob_client.download_blob()
+                contents = await blob.readall()
+                output_file.write(contents)
+
+        except Exception as ex:
+            print(f"An error happened: {ex}")
 
         print(f"Download complete. Your file is at {file.LocalPath}.")
 
@@ -60,7 +64,7 @@ class BlobStorageService(CloudStorageService):
         print(f"Uploading file to storage: {file.LocalPath} into {file.RemotePath}")
 
         with open(file.LocalPath, "rb") as data:
-            await blob_client.upload_blob(data, blob_type="BlockBlob")
+            await blob_client.upload_blob(data, blob_type="BlockBlob", overwrite=True)
 
         print(f"Upload complete. Your file is at {file.RemotePath}.")
 

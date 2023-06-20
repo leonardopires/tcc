@@ -14,7 +14,10 @@ services:
       - REVOICER_INPUT_QUEUE_NAME=revoicer-demucs-input.prod
       - REVOICER_OUTPUT_QUEUE_NAME=revoicer-demucs-output.prod
       - REVOICER_DEMUCS_MODEL=htdemucs_6s
+      - REVOICER_DEMUCS_EXTRA_PARAMS=--two-stems=vocals
       - REVOICER_DEMUCS_SHIFTS=2
+      - REVOICER_DEMUCS_DRIVER=cuda
+      - REVOICER_DEMUCS_THREAD_COUNT=12
 
     deploy:
       resources:

@@ -2,30 +2,33 @@
 
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TypeScriptTarget>ES2020</TypeScriptTarget>
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
 
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TypeScriptTarget>ES2020</TypeScriptTarget>
+    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <!-- <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked> -->
+    <!-- <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion> -->
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
-    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <SpaProxyServerUrl>https://localhost:44450</SpaProxyServerUrl>
-    <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+    <!-- <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes> -->
+    <!-- <SpaProxyServerUrl>https://localhost:44450</SpaProxyServerUrl> -->
+    <!-- <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand> -->
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>2fda1731-6d0c-4dac-abfe-5b7cc5d803d8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <RootNamespace>Ludikore.Revoicer.Web</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <TypeScriptJSXEmit>preserve</TypeScriptJSXEmit>
-    <TypeScriptModuleKind>system</TypeScriptModuleKind>
+    <!-- <TypeScriptJSXEmit>preserve</TypeScriptJSXEmit> -->
+    <!-- <TypeScriptModuleKind>system</TypeScriptModuleKind> -->
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -49,6 +52,9 @@
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.11.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.14" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
@@ -62,6 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 
@@ -77,22 +84,25 @@
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
 
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
-    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+  <!-- <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish"> -->
+  <!--   ~1~ As part of publishing, ensure the JS resources are freshly built in production mode @1@ -->
+  <!--   <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" /> -->
+  <!--   <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" /> -->
+  <!-- -->
+  <!--   ~1~ Include the newly-built files in the publish output @1@ -->
+  <!--   <ItemGroup> -->
+  <!--     <DistFiles Include="$(SpaRoot)build\**" /> -->
+  <!--     <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)"> -->
+  <!--       <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath> -->
+  <!--       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory> -->
+  <!--       <ExcludeFromSingleFile>true</ExcludeFromSingleFile> -->
+  <!--     </ResolvedFileToPublish> -->
+  <!--   </ItemGroup> -->
+  <!-- </Target> -->
 
-    <!-- Include the newly-built files in the publish output -->
-    <ItemGroup>
-      <DistFiles Include="$(SpaRoot)build\**" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-        <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      </ResolvedFileToPublish>
-    </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if &quot;$(Configuration)&quot; == &quot;Release&quot; (&#xD;&#xA;  cd $(SolutionDir)frontend&#xD;&#xA;  cmd /c npm run build&#xD;&#xA;  xcopy /e /y $(SolutionDir)frontend\dist\*.* $(ProjectDir)wwwroot\&#xD;&#xA;)" />
   </Target>
 </Project>

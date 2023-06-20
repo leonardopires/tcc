@@ -14,13 +14,19 @@ INPUT_QUEUE_NAME = os.environ["REVOICER_INPUT_QUEUE_NAME"]
 OUTPUT_QUEUE_NAME = os.environ["REVOICER_OUTPUT_QUEUE_NAME"]
 DEMUCS_MODEL = os.environ["REVOICER_DEMUCS_MODEL"]
 DEMUCS_SHIFTS = os.environ["REVOICER_DEMUCS_SHIFTS"]
+DEMUCS_EXTRA_PARAMS = os.environ["REVOICER_DEMUCS_EXTRA_PARAMS"]
+DEMUCS_DRIVER = os.environ["REVOICER_DEMUCS_DRIVER"]
+DEMUCS_THREAD_COUNT = os.environ["REVOICER_DEMUCS_THREAD_COUNT"]
 
 
 class SplitService(RevoicerBaseService):
     def __init__(self):
         super().__init__(RevoicerJob, INPUT_QUEUE_NAME, OUTPUT_QUEUE_NAME)
-        self.model = DEMUCS_MODEL
-        self.shifts = DEMUCS_SHIFTS
+        self.model = DEMUCS_MODEL or "htdemucs"
+        self.shifts = DEMUCS_SHIFTS or "2"
+        self.driver = DEMUCS_DRIVER or "cuda"
+        self.extra_params = DEMUCS_EXTRA_PARAMS or ""
+        self.simultaneous_threads = DEMUCS_THREAD_COUNT or "12"
 
     def get_output_work_items(self, job: TJob) -> List[TWorkItem]:
         """    
@@ -70,16 +76,22 @@ class SplitService(RevoicerBaseService):
         result = []
 
         output_path_format = job.OperationId + "/{stem}.{ext}"
-        process = await asyncio.create_subprocess_exec(
+        args = [
             "demucs",
-            "-d=cuda",
+            f"-d={self.driver}",
             f"--name={self.model}",
-            "--jobs=12",
+            f"--jobs={self.simultaneous_threads}",
             f"--shifts={self.shifts}",
             '--filename',
             output_path_format,
             work_item.LocalPath,
-        )
+        ]
+
+        if self.extra_params != "":
+            args.insert(3, self.extra_params)
+
+        print(f"Running demucs with args: {args}")
+        process = await asyncio.create_subprocess_exec(*args)
         return_code = await process.wait()
 
         if return_code != 0:

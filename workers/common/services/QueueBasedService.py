@@ -114,7 +114,7 @@ class QueueBasedService(Generic[TJob, TWorkItem], metaclass=abc.ABCMeta):
         :param ServiceBusMessage]: Pass the message from the input queue to the output queue
         :return: The job object
         """
-        output_message = QueueMessage(job, None)
+        output_message = QueueMessage(job, None, None)
         output_message.body = job
 
         await self.queue_service.send_message(self.output_queue, output_message)

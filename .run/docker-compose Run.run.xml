@@ -9,6 +9,7 @@
           <list>
             <option value="docker-compose.override.yml" />
             <option value="obj/Docker/docker-compose.vs.debug.g.yml" />
+            <option value="docker-compose.rider.yml" />
           </list>
         </option>
         <option name="services">
