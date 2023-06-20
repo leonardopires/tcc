@@ -24,7 +24,7 @@ Tenha à mão arquivos de música em formato `mp3` que você possa fazer o uploa
 - [Business Model Canvas](docs/LeonardoPires-Canvas3.pdf)
 
 ### Outros
-- [Base de dados dos modelos de IA para conversão de vozes (15.7GiB)](https://www.dropbox.com/s/5ex7bxahrqr6lnp/LeonardoPires-SumarioExec-v1.5.docx?dl=0)
+- [Base de dados dos modelos de IA para conversão de vozes (15.7GiB)](https://www.dropbox.com/s/cfaet2g6pwlg98s/revoicer-prod-v0.1.1-tcc-models.7z?dl=0)
 
 #### Vozes inclusas: 
   - Billie Joe (Green Day)
