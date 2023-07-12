@@ -41,7 +41,10 @@ export function revoicerTheme(): RevoicerTheme {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            background: "#C69C10",
+            background: "#ebcf40 radial-gradient(\n" +
+              "                  63.8% 59.2% at 26.72% 36.74%,\n" +
+              "                  #F8DA3F 0%,\n" +
+              "                  #C69C10 100%",
             boxShadow: "none",
             position: "fixed",
             top: 0,

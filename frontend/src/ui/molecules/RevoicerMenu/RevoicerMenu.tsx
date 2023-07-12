@@ -1,5 +1,5 @@
 import {ReactElement, useState} from "react";
-import {IconButton, Menu, MenuItem} from "@mui/material";
+import {IconButton, Menu, MenuItem, SxProps} from "@mui/material";
 import {Menu as MenuIcon} from "@mui/icons-material";
 
 
@@ -11,9 +11,10 @@ export interface IRevoicerMenuProps {
   id: string;
   icon?: ReactElement;
   actions?: IMenuAction[];
+  style?: SxProps;
 }
 
-export function RevoicerMenu({actions = [], icon = <MenuIcon/>, id}: IRevoicerMenuProps) {
+export function RevoicerMenu({actions = [], icon = <MenuIcon/>, id, style}: IRevoicerMenuProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -25,7 +26,7 @@ export function RevoicerMenu({actions = [], icon = <MenuIcon/>, id}: IRevoicerMe
       edge={"start"}
       color={"inherit"}
       aria-label={"menu"}
-      sx={{mr: 2}}
+      sx={{mr: 2, ...style}}
       onClick={handleOpen}
       size="small"
       aria-controls={open ? 'account-menu' : undefined}

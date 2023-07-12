@@ -1,5 +1,5 @@
 import {AppBar, Grid, IconButton, Toolbar} from "@mui/material";
-import {Logo} from "../../atoms/Logo/Logo.tsx";
+import {Logo, LogoColor} from "../../atoms/Logo/Logo.tsx";
 import {LogoText} from "../../atoms/LogoText.tsx";
 import {RevoicerMenu} from "../../molecules/RevoicerMenu/RevoicerMenu.tsx";
 import {IRevoicerUser} from "../../../models/IRevoicerUser.ts";
@@ -22,7 +22,7 @@ export function AppToolbar() {
               edge={"start"}
               color={"inherit"}
               aria-label={"menu"}
-              sx={{mr: 2}}
+              sx={{mr: 2, display: "none"}}
               aria-controls={open ? 'main-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
@@ -32,7 +32,7 @@ export function AppToolbar() {
           </Grid>
           <Grid item xs={8} textAlign={"center"} paddingY={"5px"}>
             <NavLink to={"/"}>
-              <Logo/>
+              <Logo color={LogoColor.Light}/>
               <LogoText/>
             </NavLink>
           </Grid>
@@ -41,6 +41,7 @@ export function AppToolbar() {
               id={"accountMenu"}
               icon={<UserAvatar user={user}/>}
               actions={[]}
+              style={{display:"none"}}
             />
           </Grid>
         </Grid>
